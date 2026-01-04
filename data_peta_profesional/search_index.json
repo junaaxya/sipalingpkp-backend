@@ -1,0 +1,4452 @@
+[
+  {
+    "name": "SRI MENANTI",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8629240153027122,
+      106.10816997945385
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KUDAI",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.850040873697217,
+      106.09255224520037
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KENANGA",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9253286686282962,
+      106.11711406357126
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PARIT PADANG",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8109172996228557,
+      106.11052561584513
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SINAR JAYA JELUTUNG",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.7901181763869674,
+      106.08570775738242
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MATRAS",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.833201178668952,
+      106.0986265802068
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "JELITIK",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8083490696509987,
+      106.08243041355777
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SURYA TIMUR",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8967549592791206,
+      106.10397213631461
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LUBUK KELIK",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8906829097856233,
+      106.16656020616018
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUKIT BETUNG",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.892966006743382,
+      106.1367103486535
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "REBO",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9322540745703276,
+      106.14791918876439
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "JURUNG",
+    "parent": "Kec. MERAWANG, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9755587650169613,
+      106.08046474614048
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PETALING",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.1290466562865777,
+      105.96979150572582
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUKIT KETOK",
+    "parent": "Kec. BELINYU, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.5716943040582976,
+      105.7491999425437
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BINTET",
+    "parent": "Kec. BELINYU, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.556589196144759,
+      105.80608957131125
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "GUNUNG MUDA",
+    "parent": "Kec. BELINYU, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.6241034196321933,
+      105.89418681472975
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LUMUT",
+    "parent": "Kec. BELINYU, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.7575104248111155,
+      105.83090433320888
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RIDING PANJANG",
+    "parent": "Kec. MERAWANG, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9840477347517798,
+      106.12963082931317
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KIMAK",
+    "parent": "Kec. MERAWANG, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9722162288611822,
+      106.04799807956061
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "DWI MAKMUR",
+    "parent": "Kec. MERAWANG, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9849196067439345,
+      106.10445905506536
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PAKU",
+    "parent": "Kec. PAYUNG, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.590042724379567,
+      106.19122694733991
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "ZED",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.049130923411889,
+      105.97417636181756
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KACE",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.1667590252846956,
+      106.04417645210205
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR DUREN",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.094464396549894,
+      106.02749832038731
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PAYA BENUA",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.1039404556160433,
+      105.89413960642949
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KOTA KAPUR",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.2465698649650836,
+      105.83399359794797
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RUKAM",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.220702536949604,
+      105.91461321814664
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR RUAI",
+    "parent": "Kec. PEMALI, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8853562479942578,
+      106.07563165321876
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PETALING BANJAR",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.322591845519485,
+      105.8599848305142
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR DUREN",
+    "parent": "Kec. PEMALI, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9106175801950538,
+      106.03228583999271
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SEMPAN",
+    "parent": "Kec. PEMALI, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9505058297535143,
+      106.01221841075419
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PEMALI",
+    "parent": "Kec. PEMALI, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8813768039452343,
+      106.03078246330331
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KARYA MAKMUR",
+    "parent": "Kec. PEMALI, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8674902110829839,
+      106.09491414879537
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BAKAM",
+    "parent": "Kec. BAKAM, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9200479743382788,
+      105.88055512368588
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KAPUK",
+    "parent": "Kec. BAKAM, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9342608377549884,
+      105.73391981901307
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "DALIL",
+    "parent": "Kec. BAKAM, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9428719764932725,
+      105.84583330411739
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TIANG TARAH",
+    "parent": "Kec. BAKAM, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9273493580974475,
+      105.80528102055536
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "DUKONG",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.782703792620951,
+      107.65128753180514
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUKIT LAYANG",
+    "parent": "Kec. BAKAM, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8454791261481316,
+      105.94143965513192
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MARAS SENANG",
+    "parent": "Kec. BAKAM, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9028856049043918,
+      105.7307096070625
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PANGKAL NIUR",
+    "parent": "Kec. RIAU SILIP, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.83797033217332,
+      105.78634476013718
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PUGUL",
+    "parent": "Kec. RIAU SILIP, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.7510274671954085,
+      105.9340886149528
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "DENIANG",
+    "parent": "Kec. RIAU SILIP, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.7553260094588299,
+      106.05208470986102
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SILIP",
+    "parent": "Kec. RIAU SILIP, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.7296675014172662,
+      105.90921072302517
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "NIBUNG",
+    "parent": "Kec. PUDING BESAR, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.0311075534333254,
+      105.84606221480642
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANAH BAWAH",
+    "parent": "Kec. PUDING BESAR, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.0535991439173102,
+      105.81469661934098
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIK KETEKOK",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.7331457699756303,
+      107.65602530285992
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KAYU BESI",
+    "parent": "Kec. PUDING BESAR, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9823368668425365,
+      105.98059011995913
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIK RAYAK",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.7442396862710465,
+      107.67399782051777
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIK PALEMPANG JAYA",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.7086425097610864,
+      107.65747997147966
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "GUNUNG RITING",
+    "parent": "Kec. MEMBALONG, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -3.1714344450839707,
+      107.75769271783712
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SADAI",
+    "parent": "Kec. TUKAK SADAI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -3.019491611044744,
+      106.71568176929249
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BANTAN",
+    "parent": "Kec. MEMBALONG, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.897515336487459,
+      107.69448018812353
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PADANG KANDIS",
+    "parent": "Kec. MEMBALONG, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -3.206611486116769,
+      107.62809853587034
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SELAT NASIK",
+    "parent": "Kec. SELAT NASIK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.837461951198346,
+      107.41711376978179
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PELEPAK PUTE",
+    "parent": "Kec. SIJUK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.642937023664705,
+      107.8391812387555
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUAK GUAL",
+    "parent": "Kec. SELAT NASIK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.904843813225399,
+      107.38841781663476
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUNGAI DAENG",
+    "parent": "Kec. MENTOK, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.0353492240966213,
+      105.17004761233245
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PULAU GERSIK",
+    "parent": "Kec. SELAT NASIK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -3.0090713725742613,
+      107.23673991644009
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TERONG",
+    "parent": "Kec. SIJUK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.639774659264692,
+      107.65910530188624
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR SERUK",
+    "parent": "Kec. SIJUK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.6817751842858675,
+      107.71878216759548
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "CERUCUK",
+    "parent": "Kec. BADAU, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.827661123620749,
+      107.6991022294292
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJUNG BINGA",
+    "parent": "Kec. SIJUK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.5974655131476503,
+      107.65988272700623
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KECIPUT",
+    "parent": "Kec. SIJUK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.582481929068064,
+      107.68360291359322
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BADAU",
+    "parent": "Kec. BADAU, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.8279869868760596,
+      107.79040362401791
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR BATU BUDING",
+    "parent": "Kec. BADAU, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.7497883906386438,
+      107.91458843202565
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUNGAI SAMAK",
+    "parent": "Kec. BADAU, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.8334251808473,
+      107.62241333033755
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "JERUK",
+    "parent": "Kec. PANGKALAN BARU, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.1968790670258995,
+      106.15165298123382
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SERDANG",
+    "parent": "Kec. TOBOALI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.8894210551032584,
+      106.3775191374695
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "JERIJI",
+    "parent": "Kec. TOBOALI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.8060657751290887,
+      106.51661075517983
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BIKANG",
+    "parent": "Kec. TOBOALI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.907735312045523,
+      106.47843519027839
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJUNGKETAPANG",
+    "parent": "Kec. TOBOALI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.9992494055178183,
+      106.446868766872
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "GADUNG",
+    "parent": "Kec. TOBOALI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.960428340597256,
+      106.4938289573659
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RIAS",
+    "parent": "Kec. TOBOALI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.9473247525364057,
+      106.40301531295502
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KEPOH",
+    "parent": "Kec. TOBOALI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.871702388899275,
+      106.57804312261005
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KEPOSANG",
+    "parent": "Kec. TOBOALI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -3.0080356367218952,
+      106.53589026500059
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RINDIK",
+    "parent": "Kec. TOBOALI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.963562473620683,
+      106.53165658708818
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KUMBUNG",
+    "parent": "Kec. LEPAR PONGOK, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.916311654720822,
+      106.77641277499771
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJUNGLABU",
+    "parent": "Kec. LEPAR PONGOK, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.969925731241576,
+      106.85695081525596
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BENCAH",
+    "parent": "Kec. AIR GEGAS, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.7605242202066163,
+      106.40858556474511
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PERGAM",
+    "parent": "Kec. AIR GEGAS, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.845405675656172,
+      106.34037670611998
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RAJIK",
+    "parent": "Kec. SIMPANG RIMBA, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.596297323198833,
+      105.9093714005742
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TEPUS",
+    "parent": "Kec. AIR GEGAS, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.699981741024111,
+      106.54388316605514
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUNGAI BARU",
+    "parent": "Kec. MENTOK, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.061340338880589,
+      105.17716505447137
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PERMIS",
+    "parent": "Kec. SIMPANG RIMBA, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.564520091055275,
+      105.9493750632049
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PAYUNG",
+    "parent": "Kec. PAYUNG, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.5856275387299195,
+      106.14711718737334
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SENGIR",
+    "parent": "Kec. PAYUNG, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.645271189836805,
+      106.19367806000434
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "IRAT",
+    "parent": "Kec. PAYUNG, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.6721523512664924,
+      106.14674009662433
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BEDENGUNG",
+    "parent": "Kec. PAYUNG, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.699937585809832,
+      106.12897719739492
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "NADUNG",
+    "parent": "Kec. PAYUNG, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.5966957154046755,
+      106.11218241550581
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BATU BETUMPANG",
+    "parent": "Kec. PULAUBESAR, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.831242019959095,
+      106.14288708270759
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PADANG MULIA",
+    "parent": "Kec. KOBA, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.50399208703203,
+      106.43786473429799
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "CELAGEN",
+    "parent": "Kec. KEPULAUAN PONGOK, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.8733241319486473,
+      107.0151493346682
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "ARUNG DALAM",
+    "parent": "Kec. KOBA, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.4914754597788,
+      106.36919769958041
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "NIBUNG",
+    "parent": "Kec. KOBA, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.5391016428777267,
+      106.35285292416782
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "GUNTUNG",
+    "parent": "Kec. KOBA, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.532408059720232,
+      106.26830077940075
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KURAU  (TIMUR)",
+    "parent": "Kec. KOBA, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.348195140243426,
+      106.25303464132227
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MANGKOL",
+    "parent": "Kec. PANGKALAN BARU, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.1552183641607,
+      106.09416166014917
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJUNG GUNUNG",
+    "parent": "Kec. PANGKALAN BARU, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.202359017768804,
+      106.18868043850836
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BENTENG",
+    "parent": "Kec. PANGKALAN BARU, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.175020826841841,
+      106.17172578824263
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PENYAK",
+    "parent": "Kec. KOBA, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.438067498800538,
+      106.26584620823668
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TERENTANG III",
+    "parent": "Kec. KOBA, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.4848894405548045,
+      106.28326152959725
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KURAU BARAT",
+    "parent": "Kec. KOBA, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.3364437614968216,
+      106.22480372767977
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "DUL",
+    "parent": "Kec. PANGKALAN BARU, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.172936705903705,
+      106.12049031435153
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BATU BELUBANG",
+    "parent": "Kec. PANGKALAN BARU, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.1832311615175324,
+      106.18131312381249
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KEBINTIK",
+    "parent": "Kec. PANGKALAN BARU, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.1573969380719142,
+      106.21726947268448
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUNGAI SELAN",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.396623287866529,
+      105.93490307369451
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KERANTAI",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.3742958744078098,
+      106.08771987477994
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUKIT KIJANG",
+    "parent": "Kec. NAMANG, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.2359689931319435,
+      106.18369032299789
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LAMPUR",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.442087288400166,
+      106.0591048173321
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KEMINGKING",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.453950760239739,
+      106.16549200925769
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KERAKAS",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.4158295819893256,
+      106.1235767667658
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MELABUN",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.3468287610430827,
+      106.01307151430433
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "ROMADHON",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.2724078787315154,
+      105.95433184488344
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KERETAK ATAS",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.2742188059594604,
+      106.01308352717555
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "CELUAK",
+    "parent": "Kec. SIMPANG KATIS, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.3370558615991364,
+      106.13408357115142
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUNGKAP",
+    "parent": "Kec. SIMPANG KATIS, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.34299172852173,
+      106.15836375783056
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "NAMANG",
+    "parent": "Kec. NAMANG, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.3429629760191455,
+      106.19056006318452
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BELILIK",
+    "parent": "Kec. NAMANG, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.391726494911317,
+      106.23194107236773
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LUBUK LINGKUK",
+    "parent": "Kec. LUBUK BESAR, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.5925198488087084,
+      106.60153323533756
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJUNG",
+    "parent": "Kec. MENTOK, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.0279820854059367,
+      105.14618707570725
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR BELO",
+    "parent": "Kec. MENTOK, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.0238501361043095,
+      105.2324456672068
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BELO LAUT",
+    "parent": "Kec. MENTOK, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.084593098626854,
+      105.29000219387673
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PELANGAS",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.9310814570997288,
+      105.36411059146835
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MAYANG",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.986488936395233,
+      105.30995203081517
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PEBUAR",
+    "parent": "Kec. JEBUS, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.701122486292658,
+      105.39220278159486
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR NYATOH",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.8157822626747493,
+      105.42231347467508
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SIMPANG GONG",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.9052024352450228,
+      105.32574161197958
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PANGEK",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.929500515404499,
+      105.39510458334057
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR MENDUYUNG",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.067678867272328,
+      105.43865590487007
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUNGAI BULUH",
+    "parent": "Kec. JEBUS, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.7165491906516157,
+      105.40704306250396
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TUMBAK PETAR",
+    "parent": "Kec. JEBUS, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.7468406278458566,
+      105.51183794579386
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RUKAM",
+    "parent": "Kec. JEBUS, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.7400716297975596,
+      105.6216897091187
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RANGGI ASAM",
+    "parent": "Kec. JEBUS, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.707729316757183,
+      105.5172337631228
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MISLAK",
+    "parent": "Kec. JEBUS, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.7174398221957974,
+      105.46675563213996
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KAYU ARANG",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.9739625110790953,
+      105.63958738238843
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "DENDANG",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.8757545630295116,
+      105.59982176173283
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TEBING",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.8620383661335236,
+      105.65536299042276
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TERENTANG",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.8876959586691417,
+      105.49897771770236
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TUIK",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.806113356577568,
+      105.73433192842614
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TUGANG",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.8109903797739662,
+      105.49993938069412
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR BULIN",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.8163685372226726,
+      105.63588748445355
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PANGKAL BERAS",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.919553261947821,
+      105.5425969314323
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SANGKU",
+    "parent": "Kec. TEMPILANG, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.040389854286883,
+      105.70445795449221
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUYAN KELUMBI",
+    "parent": "Kec. TEMPILANG, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.05088144108082,
+      105.74601316006324
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PENYAMPAK",
+    "parent": "Kec. TEMPILANG, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.002390308900544,
+      105.68915535528134
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BENTENG KOTA",
+    "parent": "Kec. TEMPILANG, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.096730599744317,
+      105.6345954194286
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR LINTANG",
+    "parent": "Kec. TEMPILANG, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.110666628220031,
+      105.67233134856994
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SINAR SURYA",
+    "parent": "Kec. TEMPILANG, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.1032057402479345,
+      105.72339584081612
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SIMPANG YUL",
+    "parent": "Kec. TEMPILANG, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.977620717898183,
+      105.73887634551151
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TELAK",
+    "parent": "Kec. PARITTIGA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.6779443195801864,
+      105.57216770907665
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PUPUT",
+    "parent": "Kec. PARITTIGA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.668320623305047,
+      105.50322162799118
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KAPIT",
+    "parent": "Kec. PARITTIGA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.6670094297448317,
+      105.61254068631153
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SEMULUT",
+    "parent": "Kec. PARITTIGA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.676473249426956,
+      105.64514740768858
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TELUK LIMAU",
+    "parent": "Kec. PARITTIGA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.5634959547246075,
+      105.57226675374451
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KURNIA JAYA",
+    "parent": "Kec. MANGGAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.861275976186274,
+      108.28689656416526
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUKU LIMAU",
+    "parent": "Kec. MANGGAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.5937283629608547,
+      108.57602938947167
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SELINGSING",
+    "parent": "Kec. GANTUNG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.9283999917985515,
+      108.18056704667217
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "JANGKAR ASAM",
+    "parent": "Kec. GANTUNG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -3.007711464191458,
+      108.051437920168
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BALOK",
+    "parent": "Kec. DENDANG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -3.0207591976628763,
+      107.8997846263189
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "DENDANG",
+    "parent": "Kec. DENDANG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -3.0578069666417553,
+      107.93423437395374
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "JANGKANG",
+    "parent": "Kec. DENDANG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.9643861227032953,
+      107.88587539170122
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "NYURUK",
+    "parent": "Kec. DENDANG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.907370827850574,
+      107.84068874200376
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MENTAWAK",
+    "parent": "Kec. KELAPA KAMPIT, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.760065773268422,
+      108.04308102805399
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUDING",
+    "parent": "Kec. KELAPA KAMPIT, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.692861554325273,
+      107.99495259742768
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MAYANG",
+    "parent": "Kec. KELAPA KAMPIT, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.6875656694801306,
+      108.11638104511401
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MELINTANG",
+    "parent": "Kec. RANGKUI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1359670824732118,
+      106.10607602044156
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PEMBAHARUAN",
+    "parent": "Kec. KELAPA KAMPIT, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.642460720692971,
+      108.08668696328111
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR KELIK",
+    "parent": "Kec. DAMAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.722592229133602,
+      108.1556414496446
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BURONG MANDI",
+    "parent": "Kec. DAMAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.7574494351462113,
+      108.24648954786751
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MENGKUBANG",
+    "parent": "Kec. DAMAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.8035175193824404,
+      108.20708217959698
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SIMPANG TIGA",
+    "parent": "Kec. SIMPANG RENGGIANG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.8455379365257163,
+      107.9268032168024
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LINTANG",
+    "parent": "Kec. SIMPANG RENGGIANG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.9408696227157995,
+      108.0164354634976
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJUNG BATU ITAM",
+    "parent": "Kec. SIMPANG PESAK, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -3.1965565397916227,
+      108.04769473600352
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJUNG KELUMPANG",
+    "parent": "Kec. SIMPANG PESAK, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -3.2450446082007303,
+      107.99048889248056
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SEMABUNG LAMA",
+    "parent": "Kec. BUKITINTAN, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1326603068157395,
+      106.12914220900886
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BACANG",
+    "parent": "Kec. BUKITINTAN, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.137654476576018,
+      106.14144843209625
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR MAWAR",
+    "parent": "Kec. BUKITINTAN, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1169404279564112,
+      106.13731621545325
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "OPAS INDAH",
+    "parent": "Kec. TAMAN SARI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.116087406658614,
+      106.11662266915758
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "GEDUNG NASIONAL",
+    "parent": "Kec. TAMAN SARI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1246736402691857,
+      106.1149571714397
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PASIR GARAM",
+    "parent": "Kec. PANGKAL BALAM, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1014147076294427,
+      106.12178236593354
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LONTONG PANCUR",
+    "parent": "Kec. PANGKAL BALAM, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.093297908487406,
+      106.12492860094264
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AMPUI",
+    "parent": "Kec. PANGKAL BALAM, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.10806595225284,
+      106.1266705861305
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BINTANG",
+    "parent": "Kec. RANGKUI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1340296629869826,
+      106.11352849172987
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "ASAM",
+    "parent": "Kec. RANGKUI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.142320237310908,
+      106.10166266403948
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PARIT LALANG",
+    "parent": "Kec. RANGKUI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.142686678151235,
+      106.10792304437048
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KERAMAT",
+    "parent": "Kec. RANGKUI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1371427934199567,
+      106.09258780269
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "GAJAH MADA",
+    "parent": "Kec. RANGKUI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1398138794950143,
+      106.0976227252643
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TAMAN BUNGA",
+    "parent": "Kec. GERUNGGANG, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1101068207941207,
+      106.09883742189025
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUKITMERAPIN",
+    "parent": "Kec. GERUNGGANG, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1128672212384823,
+      106.09248415969279
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUKITSARI",
+    "parent": "Kec. GERUNGGANG, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1181325736251075,
+      106.10453380560816
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TUA TUNU",
+    "parent": "Kec. GERUNGGANG, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.0937155251174375,
+      106.06401709472792
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KACANG PEDANG",
+    "parent": "Kec. GERUNGGANG, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1250782557099375,
+      106.0921827544009
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "JERAMBAH GANTUNG",
+    "parent": "Kec. GABEK, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.0756363454530664,
+      106.12217320065322
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SELINDUNG",
+    "parent": "Kec. GABEK, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.0922806327131336,
+      106.09296283373111
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "GABEK SATU",
+    "parent": "Kec. GABEK, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1032390582395295,
+      106.10755156345094
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "GABEK DUA",
+    "parent": "Kec. GABEK, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1025809263044324,
+      106.11564384893087
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR SALEMBA",
+    "parent": "Kec. GABEK, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.106942004468522,
+      106.10339947379279
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUNGAILIAT",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8708200542616822,
+      106.13706413207552
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SINAR BARU",
+    "parent": "Kec. SUNGAILIAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8565458278621587,
+      106.12298980423937
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KUTO PANJI",
+    "parent": "Kec. BELINYU, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.6431003204353667,
+      105.78217446946616
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR JUKUNG",
+    "parent": "Kec. BELINYU, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.622383635677616,
+      105.75380984916657
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "REMODONG INDAH",
+    "parent": "Kec. BELINYU, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.619682728527435,
+      105.79336025230346
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR ASAM",
+    "parent": "Kec. BELINYU, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.6032547533430412,
+      105.83684490081853
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MANTUNG",
+    "parent": "Kec. BELINYU, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.7177224159062452,
+      105.76863955295143
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BELINYU",
+    "parent": "Kec. BELINYU, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.691828412775214,
+      105.77476715102908
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BATU RUSA",
+    "parent": "Kec. MERAWANG, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.0255313491555706,
+      106.10095486798785
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BALUN IJUK",
+    "parent": "Kec. MERAWANG, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.0593644020747734,
+      106.05718368539218
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "GUNUNG PELAWAN",
+    "parent": "Kec. BELINYU, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.5581750532099632,
+      105.8792205081345
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RIDING PANJANG",
+    "parent": "Kec. BELINYU, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.702705826842303,
+      105.84279380740732
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PINANG SEBATANG",
+    "parent": "Kec. SIMPANG KATIS, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.3314659175753154,
+      106.11743409480788
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PAGARAWAN",
+    "parent": "Kec. MERAWANG, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.059372944394776,
+      106.09912009732835
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MERAWANG",
+    "parent": "Kec. MERAWANG, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9475946004088183,
+      106.09838099808533
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR ANYIR",
+    "parent": "Kec. MERAWANG, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.048547597978867,
+      106.14180773543258
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "JADA BAHRIN",
+    "parent": "Kec. MERAWANG, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.0372078725795943,
+      106.03225449276866
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PENAGAN",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.2833174687705253,
+      105.86544704870477
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "CENGKONG ABANG",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.1460473182121227,
+      106.01661907818436
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KEMUJA",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.082359761220824,
+      105.96087899261369
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MENDO",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.143131704911193,
+      105.87976748490273
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR BULUH",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.1974614554778142,
+      105.98470334814397
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LABUH AIR PANDAN",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.1834886893541756,
+      105.83855007018778
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KACE TIMUR",
+    "parent": "Kec. MENDO BARAT, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.139222396956536,
+      106.08200638473183
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PENYAMUN",
+    "parent": "Kec. PEMALI, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8407119279001167,
+      106.03615792914475
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KAMPONG DAMAI",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.733501000796152,
+      107.63614399906332
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "NEKNANG",
+    "parent": "Kec. BAKAM, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9388982456823554,
+      105.77103170559897
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MANGKA",
+    "parent": "Kec. BAKAM, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9592105308075445,
+      105.92735864317214
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MABAT",
+    "parent": "Kec. BAKAM, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.9131005153905811,
+      105.95310921424282
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RIAU",
+    "parent": "Kec. RIAU SILIP, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.7414242357427459,
+      105.87674628976022
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BULUH TUMBANG",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.768492990061569,
+      107.7405412136156
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PERAWAS",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.7479352119290645,
+      107.69286422280277
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "CIT",
+    "parent": "Kec. RIAU SILIP, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.7516976760757443,
+      106.00071200976824
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MAPUR",
+    "parent": "Kec. RIAU SILIP, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.6283956048484576,
+      105.99932583329272
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BANYU ASIN",
+    "parent": "Kec. RIAU SILIP, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.88006135959919,
+      105.75568558100656
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BERBURA",
+    "parent": "Kec. RIAU SILIP, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -1.8175892217982035,
+      105.83873819771266
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PUDING BESAR",
+    "parent": "Kec. PUDING BESAR, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.015962008568221,
+      105.94388322502151
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LABU",
+    "parent": "Kec. PUDING BESAR, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.036872703149107,
+      105.8854047506778
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SAING",
+    "parent": "Kec. PUDING BESAR, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.0311496057571787,
+      105.78820206619002
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KOTA WARINGIN",
+    "parent": "Kec. PUDING BESAR, BANGKA",
+    "type": "Desa",
+    "coords": [
+      -2.115812984634879,
+      105.78896000614519
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KOTA",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.7423241900968307,
+      107.63542274549954
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PARIT",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.738890571233377,
+      107.62916845097686
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LESUNG BATANG",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.749350747268433,
+      107.66090047282583
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PANGKALLALANG",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.7565057328329146,
+      107.652903815498
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJUNGPENDAM",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.728254274882646,
+      107.63233292363347
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PAAL SATU",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.730614446514552,
+      107.64396332085357
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "JURU SEBERANG",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.7764695559459605,
+      107.61947330771295
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR SAGA",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.711522030170911,
+      107.63688344443283
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR MERBAU",
+    "parent": "Kec. TANJUNG PANDAN, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.7181396917093092,
+      107.6726080581556
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MEMBALONG",
+    "parent": "Kec. MEMBALONG, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -3.1329123982007863,
+      107.70002288821523
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PERPAT",
+    "parent": "Kec. MEMBALONG, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -3.0813260822711612,
+      107.64578454097558
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KEMBIRI",
+    "parent": "Kec. MEMBALONG, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -3.041135948943803,
+      107.77647576249419
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "NYELANDING",
+    "parent": "Kec. AIR GEGAS, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.727182287320135,
+      106.25787713942114
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LASSAR",
+    "parent": "Kec. MEMBALONG, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -3.009642015874708,
+      107.62056434031109
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SIMPANG RUSA",
+    "parent": "Kec. MEMBALONG, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.9595244894246813,
+      107.71943657367586
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJUNGRUSA",
+    "parent": "Kec. MEMBALONG, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -3.13010803249637,
+      107.81291657168393
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MENTIGI",
+    "parent": "Kec. MEMBALONG, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -3.1801611042291977,
+      107.7009933200434
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PULAU SELIU",
+    "parent": "Kec. MEMBALONG, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -3.220315010871058,
+      107.53197319328686
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PULAU SUMEDANG",
+    "parent": "Kec. MEMBALONG, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -3.31746410216589,
+      107.21215397229467
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TUKAK",
+    "parent": "Kec. TUKAK SADAI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.9853422464722885,
+      106.64745403300971
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PADANG BARU",
+    "parent": "Kec. PANGKALAN BARU, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.1650367852976515,
+      106.16136704476587
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PETALING",
+    "parent": "Kec. SELAT NASIK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.9007170260988526,
+      107.44937191136042
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJONG TINGGI",
+    "parent": "Kec. SIJUK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.57367602104425,
+      107.71331344190523
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SIJUK",
+    "parent": "Kec. SIJUK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.5669020761141472,
+      107.78875083231485
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BATU ITAM",
+    "parent": "Kec. SIJUK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.682312857829789,
+      107.64639957572712
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR SELUMAR",
+    "parent": "Kec. SIJUK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.634340123051205,
+      107.75401875577255
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUNGAI PADANG",
+    "parent": "Kec. SIJUK, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.5894878378201813,
+      107.87327761523734
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KACANG BUTOR",
+    "parent": "Kec. BADAU, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.7466962903787,
+      107.82384782480314
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PEGANTUNGAN",
+    "parent": "Kec. BADAU, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.922449219636851,
+      107.55341352601671
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "IBUL",
+    "parent": "Kec. BADAU, BELITUNG",
+    "type": "Desa",
+    "coords": [
+      -2.8512442307371058,
+      107.82144613629637
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TOBOALI",
+    "parent": "Kec. TOBOALI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -3.0618079787835177,
+      106.51963630122945
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TELADAN",
+    "parent": "Kec. TOBOALI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.9924500651899018,
+      106.45970097122192
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "NANGKA",
+    "parent": "Kec. AIR GEGAS, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.6461992640960164,
+      106.39333270954351
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJUNGSANGKAR",
+    "parent": "Kec. LEPAR PONGOK, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.908662231220886,
+      106.78570071539865
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PENUTUK",
+    "parent": "Kec. LEPAR PONGOK, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.978885267333356,
+      106.77427108926788
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIRGEGAS",
+    "parent": "Kec. AIR GEGAS, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.6992315986073114,
+      106.38841298320621
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "DELAS",
+    "parent": "Kec. AIR GEGAS, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.7456861496763607,
+      106.31269149863192
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RANGGAS",
+    "parent": "Kec. AIR GEGAS, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.619555483463415,
+      106.32321594885397
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIRBARA",
+    "parent": "Kec. AIR GEGAS, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.5798677489640625,
+      106.32981418800424
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SIDOHARJO",
+    "parent": "Kec. AIR GEGAS, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.7879684069809936,
+      106.24730829376958
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BANGKA KOTA",
+    "parent": "Kec. SIMPANG RIMBA, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.499303692740523,
+      106.00728050480419
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "JELUTUNG II",
+    "parent": "Kec. SIMPANG RIMBA, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.6418940305702105,
+      106.04065967691831
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "GUDANG",
+    "parent": "Kec. SIMPANG RIMBA, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.718019904660531,
+      105.98497527022721
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RANGGUNG",
+    "parent": "Kec. PAYUNG, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.630603952236253,
+      106.0922610649688
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SEBAGIN",
+    "parent": "Kec. SIMPANG RIMBA, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.6359827649920504,
+      105.93708856800336
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SIMPANG RIMBA",
+    "parent": "Kec. SIMPANG RIMBA, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.5601897187671296,
+      106.0322441061258
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MALIK",
+    "parent": "Kec. PAYUNG, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.505702726419137,
+      106.16237388334017
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PANGKAL BULUH",
+    "parent": "Kec. PAYUNG, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.5458100997885,
+      106.14104173211672
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PASIR PUTIH",
+    "parent": "Kec. TUKAK SADAI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -3.044023430676453,
+      106.68072891827633
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TIRAM",
+    "parent": "Kec. TUKAK SADAI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -3.0395666231638674,
+      106.61535877003871
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUKIT TERAP",
+    "parent": "Kec. TUKAK SADAI, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -3.003218489304588,
+      106.58451509298138
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BEROK",
+    "parent": "Kec. KOBA, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.4896059893366993,
+      106.39830285427047
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUKAJAYA",
+    "parent": "Kec. PULAUBESAR, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.7561773253896575,
+      106.10286824193184
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PANCA TUNGGAL",
+    "parent": "Kec. PULAUBESAR, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.8328239331581386,
+      106.18762961990419
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUMBER JAYA PERMAI",
+    "parent": "Kec. PULAUBESAR, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.7756292590300733,
+      106.20612950556986
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "FAJAR INDAH",
+    "parent": "Kec. PULAUBESAR, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.7899487980842483,
+      106.17707276749593
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SIMPANG PERLANG",
+    "parent": "Kec. KOBA, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.5286105862144796,
+      106.41273986663461
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PONGOK",
+    "parent": "Kec. KEPULAUAN PONGOK, BANGKA SELATAN",
+    "type": "Desa",
+    "coords": [
+      -2.8713491050846307,
+      107.06053581823024
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KOBA",
+    "parent": "Kec. KOBA, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.500311614303151,
+      106.40982516364092
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BELULUK",
+    "parent": "Kec. PANGKALAN BARU, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.1762791378434616,
+      106.14059242824833
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PEDINDANG",
+    "parent": "Kec. PANGKALAN BARU, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.1684453746824106,
+      106.08900077892726
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BASKARA BAKTI",
+    "parent": "Kec. NAMANG, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.2483447097909894,
+      106.20865263798036
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SINAR MANIK",
+    "parent": "Kec. JEBUS, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.6683787378832162,
+      105.47602124608697
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR MESU",
+    "parent": "Kec. PANGKALAN BARU, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.223422514584874,
+      106.11621633221584
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR MESU TIMUR",
+    "parent": "Kec. PANGKALAN BARU, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.2165884024039126,
+      106.15549709870201
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KERETAK",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.329567988830041,
+      106.04917999202746
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SARANG MANDI",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.325757287801546,
+      105.97971372653393
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MUNGGU",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.433285822895481,
+      105.99347554527813
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUNGAI SELAN ATAS",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.3773143370252408,
+      106.00562626766539
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "CAMBAI SELATAN",
+    "parent": "Kec. NAMANG, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.2629887892877676,
+      106.14165655074758
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJUNG PURA",
+    "parent": "Kec. SUNGAI SELAN, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.377803230612949,
+      105.86052779974641
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KATIS",
+    "parent": "Kec. SIMPANG KATIS, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.2984353298568796,
+      106.06728785119645
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SIMPANG KATIS",
+    "parent": "Kec. SIMPANG KATIS, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.2771682684684884,
+      106.05863894633619
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BERUAS",
+    "parent": "Kec. SIMPANG KATIS, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.2597078350709077,
+      106.08235374573903
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PUPUT",
+    "parent": "Kec. SIMPANG KATIS, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.313354330831587,
+      106.09454740732843
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TERU",
+    "parent": "Kec. SIMPANG KATIS, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.232551599142786,
+      106.03980733303034
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TERAK",
+    "parent": "Kec. SIMPANG KATIS, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.1863982901208194,
+      106.07802803313301
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PASIR GARAM",
+    "parent": "Kec. SIMPANG KATIS, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.199433739729773,
+      106.0498977552705
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "CAMBAI",
+    "parent": "Kec. NAMANG, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.2477903852815784,
+      106.16903978369746
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KAYU BESI",
+    "parent": "Kec. NAMANG, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.221430652195536,
+      106.19312539284603
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "JELUTUNG",
+    "parent": "Kec. NAMANG, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.280198711827102,
+      106.18456474232539
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PERLANG",
+    "parent": "Kec. LUBUK BESAR, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.5794795546607974,
+      106.54891910062449
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BATU BERIGA",
+    "parent": "Kec. LUBUK BESAR, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.5760365134948384,
+      106.77310414402429
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TRUBUS",
+    "parent": "Kec. LUBUK BESAR, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.565366475420928,
+      106.48221588416685
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LUBUK BESAR",
+    "parent": "Kec. LUBUK BESAR, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.6453608829166146,
+      106.65562558553614
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KULUR",
+    "parent": "Kec. LUBUK BESAR, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.5482549250360615,
+      106.44400522048554
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KULUR ILIR",
+    "parent": "Kec. LUBUK BESAR, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.514260550852096,
+      106.46620437604564
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BELIMBING",
+    "parent": "Kec. LUBUK BESAR, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.5879915879846673,
+      106.70442193506653
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR PUTIH",
+    "parent": "Kec. MENTOK, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.9612659417660125,
+      105.1801035962522
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LUBUK PABRIK",
+    "parent": "Kec. LUBUK BESAR, BANGKA TENGAH",
+    "type": "Desa",
+    "coords": [
+      -2.629022189728143,
+      106.61103884101526
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR LIMAU",
+    "parent": "Kec. MENTOK, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.9547410776798055,
+      105.24247306847445
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KUNDI",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.070161747186265,
+      105.37742846946779
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PERADONG",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.8647258969135927,
+      105.39447961232516
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BERANG",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.9755791212810365,
+      105.4606976946217
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RAMBAT",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.907833214831796,
+      105.27786161562523
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SIMPANG TIGA",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.000115877295985,
+      105.39497412535766
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "IBUL",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.9521895229968458,
+      105.49446170525025
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUKIT TERAK",
+    "parent": "Kec. SIMPANG TERITIP, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.108616265891948,
+      105.36444370458268
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "JEBUS",
+    "parent": "Kec. JEBUS, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.7616004553386373,
+      105.45055644482026
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LIMBUNG",
+    "parent": "Kec. JEBUS, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.7439554987566037,
+      105.56526098875642
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KETAP",
+    "parent": "Kec. JEBUS, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.6565132255958177,
+      105.41259969114301
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR KUANG",
+    "parent": "Kec. JEBUS, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.685094030079304,
+      105.51561602563555
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KELAPA",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.8749928716148425,
+      105.69529324202843
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MANCUNG",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.9352084208302385,
+      105.67819731131567
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PUSUK",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.7973490249304591,
+      105.68903772151468
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KACUNG",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.829115140997875,
+      105.54664531578123
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SINAR SARI",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.9010163336095587,
+      105.68004629066604
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BERUAS",
+    "parent": "Kec. KELAPA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.8445856809731007,
+      105.71380172898606
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TEMPILANG",
+    "parent": "Kec. TEMPILANG, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.074132973385779,
+      105.67783145991041
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TANJUNG NIUR",
+    "parent": "Kec. TEMPILANG, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -2.032569037515183,
+      105.58689314467706
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SEKAR BIRU",
+    "parent": "Kec. PARITTIGA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.6604487708313054,
+      105.52727529954893
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "CUPAT",
+    "parent": "Kec. PARITTIGA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.60923055256458,
+      105.57876389276365
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BAKIT",
+    "parent": "Kec. PARITTIGA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.6771672586723005,
+      105.67806166235567
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR GANTANG",
+    "parent": "Kec. PARITTIGA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.6171536420818446,
+      105.46414630595083
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KELABAT",
+    "parent": "Kec. PARITTIGA, BANGKA BARAT",
+    "type": "Desa",
+    "coords": [
+      -1.6061164507847072,
+      105.50729625836466
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LALANG JAYA",
+    "parent": "Kec. MANGGAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.8714829557768344,
+      108.2725598102146
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PADANG",
+    "parent": "Kec. MANGGAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.886979872319174,
+      108.23511745899236
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KELUBI",
+    "parent": "Kec. MANGGAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.863597341892802,
+      108.13072662906437
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LALANG",
+    "parent": "Kec. MANGGAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.879451099448757,
+      108.2798898127153
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BARU",
+    "parent": "Kec. MANGGAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.852596687182872,
+      108.29061299657758
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MEKAR JAYA",
+    "parent": "Kec. MANGGAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.861947450318648,
+      108.27456062365017
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BENTAIAN JAYA",
+    "parent": "Kec. MANGGAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.8579147312079085,
+      108.18571368647417
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "GANTUNG",
+    "parent": "Kec. GANTUNG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.9929679181808306,
+      108.19485726183107
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SUKAMANDI",
+    "parent": "Kec. DAMAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.8291379514749186,
+      108.24977584542246
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LILANGAN",
+    "parent": "Kec. GANTUNG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -3.132101590707432,
+      108.10754837267837
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LENGGANG",
+    "parent": "Kec. GANTUNG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.9560147423169756,
+      108.14117960186127
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BATU PENYU",
+    "parent": "Kec. GANTUNG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -3.034526723827982,
+      108.15451195980103
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "LIMBONGAN",
+    "parent": "Kec. GANTUNG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -3.0813087449699985,
+      108.09840998852506
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KEJAKSAAN",
+    "parent": "Kec. TAMAN SARI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1266401824576517,
+      106.10217517363893
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SENYUBUK",
+    "parent": "Kec. KELAPA KAMPIT, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.714825780199525,
+      108.08045207087281
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "CENDIL",
+    "parent": "Kec. KELAPA KAMPIT, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.641013498986218,
+      107.94458787858537
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MEMPAYA",
+    "parent": "Kec. DAMAR, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.767678417846193,
+      108.17784100263547
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RENGGIANG",
+    "parent": "Kec. SIMPANG RENGGIANG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.8659552254923293,
+      108.01882215081905
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIK MADU",
+    "parent": "Kec. SIMPANG RENGGIANG, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -2.862038114876208,
+      108.09139482657592
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "DUKONG",
+    "parent": "Kec. SIMPANG PESAK, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -3.199771874225328,
+      107.98862763835707
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SIMPANG PESAK",
+    "parent": "Kec. SIMPANG PESAK, BELITUNG TIMUR",
+    "type": "Desa",
+    "coords": [
+      -3.1186897379775473,
+      107.98400078456602
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "RAWA BANGUN",
+    "parent": "Kec. TAMAN SARI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1274022293280184,
+      106.10915729578316
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR ITAM",
+    "parent": "Kec. BUKITINTAN, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.147068585556405,
+      106.15212011963433
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PASIR PUTIH",
+    "parent": "Kec. BUKITINTAN, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.12069876777813,
+      106.12383484359474
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "TEMBERAN",
+    "parent": "Kec. BUKITINTAN, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.113376974797781,
+      106.15775267554721
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SINAR BULAN",
+    "parent": "Kec. BUKITINTAN, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1462138211292325,
+      106.16844257786211
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BATIN TIKAL",
+    "parent": "Kec. TAMAN SARI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.120582462653008,
+      106.11047866983904
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "KETAPANG",
+    "parent": "Kec. PANGKAL BALAM, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1025919273234015,
+      106.13354253488791
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "REJO SARI",
+    "parent": "Kec. PANGKAL BALAM, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1102534549513505,
+      106.1179976658259
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PINTU AIR",
+    "parent": "Kec. RANGKUI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1328341395618975,
+      106.10227706304912
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "MASJID JAMIK",
+    "parent": "Kec. RANGKUI, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.130924838257868,
+      106.11125487488509
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR KEPALA TUJUH",
+    "parent": "Kec. GERUNGGANG, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1193329093509554,
+      106.07404237958534
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SELINDUNG BARU",
+    "parent": "Kec. GABEK, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.0938037898800883,
+      106.11213491741366
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "PASAR PADI",
+    "parent": "Kec. GIRIMAYA, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.129065181375448,
+      106.117568948136
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUKITINTAN",
+    "parent": "Kec. GIRIMAYA, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.1385607581475385,
+      106.11621236405595
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "BUKITBESAR",
+    "parent": "Kec. GIRIMAYA, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.147008006246261,
+      106.12146001618004
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SRIWIJAYA",
+    "parent": "Kec. GIRIMAYA, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.14944012121719,
+      106.11167355139159
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "SEMABUNG BARU",
+    "parent": "Kec. GIRIMAYA, KOTA PANGKALPINANG",
+    "type": "Desa",
+    "coords": [
+      -2.14086711051769,
+      106.12527605370512
+    ],
+    "zoom": 15
+  },
+  {
+    "name": "AIR GEGAS",
+    "parent": "BANGKA SELATAN",
+    "type": "Kecamatan",
+    "coords": [
+      -2.712082791987801,
+      106.37187107064564
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "BADAU",
+    "parent": "BELITUNG",
+    "type": "Kecamatan",
+    "coords": [
+      -2.7988968421954676,
+      107.78207758126747
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "BAKAM",
+    "parent": "BANGKA",
+    "type": "Kecamatan",
+    "coords": [
+      -1.9108556621426527,
+      105.87604088233424
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "BELINYU",
+    "parent": "BANGKA",
+    "type": "Kecamatan",
+    "coords": [
+      -1.6280386381572525,
+      105.84171917991631
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "BUKITINTAN",
+    "parent": "KOTA PANGKALPINANG",
+    "type": "Kecamatan",
+    "coords": [
+      -2.1245999167659546,
+      106.15083655835964
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "DAMAR",
+    "parent": "BELITUNG TIMUR",
+    "type": "Kecamatan",
+    "coords": [
+      -2.7737015107436642,
+      108.19565509033652
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "DENDANG",
+    "parent": "BELITUNG TIMUR",
+    "type": "Kecamatan",
+    "coords": [
+      -2.9810250624452275,
+      107.88687949483031
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "GABEK",
+    "parent": "KOTA PANGKALPINANG",
+    "type": "Kecamatan",
+    "coords": [
+      -2.0855532434679507,
+      106.11163569357586
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "GANTUNG",
+    "parent": "BELITUNG TIMUR",
+    "type": "Kecamatan",
+    "coords": [
+      -3.036735663736749,
+      108.12678662708214
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "GERUNGGANG",
+    "parent": "KOTA PANGKALPINANG",
+    "type": "Kecamatan",
+    "coords": [
+      -2.101559056925969,
+      106.07104219193523
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "GIRIMAYA",
+    "parent": "KOTA PANGKALPINANG",
+    "type": "Kecamatan",
+    "coords": [
+      -2.143993739767768,
+      106.11833760996754
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "JEBUS",
+    "parent": "BANGKA BARAT",
+    "type": "Kecamatan",
+    "coords": [
+      -1.7115152405495675,
+      105.48001862546796
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "KELAPA",
+    "parent": "BANGKA BARAT",
+    "type": "Kecamatan",
+    "coords": [
+      -1.8665702475160648,
+      105.61035758949261
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "KELAPA KAMPIT",
+    "parent": "BELITUNG TIMUR",
+    "type": "Kecamatan",
+    "coords": [
+      -2.6938268106447043,
+      108.02209180840919
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "KEPULAUAN PONGOK",
+    "parent": "BANGKA SELATAN",
+    "type": "Kecamatan",
+    "coords": [
+      -2.8713549319479084,
+      107.06040191583146
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "KOBA",
+    "parent": "BANGKA TENGAH",
+    "type": "Kecamatan",
+    "coords": [
+      -2.4963080860137836,
+      106.31434089993225
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "LEPAR PONGOK",
+    "parent": "BANGKA SELATAN",
+    "type": "Kecamatan",
+    "coords": [
+      -2.9583190428660853,
+      106.81264420658891
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "LUBUK BESAR",
+    "parent": "BANGKA TENGAH",
+    "type": "Kecamatan",
+    "coords": [
+      -2.5951397588170155,
+      106.60361707295806
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "MANGGAR",
+    "parent": "BELITUNG TIMUR",
+    "type": "Kecamatan",
+    "coords": [
+      -2.853437616237872,
+      108.21736170130477
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "MEMBALONG",
+    "parent": "BELITUNG",
+    "type": "Kecamatan",
+    "coords": [
+      -3.043056265768696,
+      107.70140831266252
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "MENDO BARAT",
+    "parent": "BANGKA",
+    "type": "Kecamatan",
+    "coords": [
+      -2.178312149155064,
+      105.91654410439374
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "MENTOK",
+    "parent": "BANGKA BARAT",
+    "type": "Kecamatan",
+    "coords": [
+      -2.023165109708711,
+      105.22710110328067
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "MERAWANG",
+    "parent": "BANGKA",
+    "type": "Kecamatan",
+    "coords": [
+      -2.007647279314289,
+      106.08364012188039
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "NAMANG",
+    "parent": "BANGKA TENGAH",
+    "type": "Kecamatan",
+    "coords": [
+      -2.3294243346383823,
+      106.200677298381
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "PANGKAL BALAM",
+    "parent": "KOTA PANGKALPINANG",
+    "type": "Kecamatan",
+    "coords": [
+      -2.101223142943641,
+      106.12575060850351
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "PANGKALAN BARU",
+    "parent": "BANGKA TENGAH",
+    "type": "Kecamatan",
+    "coords": [
+      -2.1932270478959013,
+      106.13810902382671
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "PARITTIGA",
+    "parent": "BANGKA BARAT",
+    "type": "Kecamatan",
+    "coords": [
+      -1.6300424219284997,
+      105.56405713785645
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "PAYUNG",
+    "parent": "BANGKA SELATAN",
+    "type": "Kecamatan",
+    "coords": [
+      -2.614069940628017,
+      106.14599838585605
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "PEMALI",
+    "parent": "BANGKA",
+    "type": "Kecamatan",
+    "coords": [
+      -1.8834568928518685,
+      106.03729580787598
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "PUDING BESAR",
+    "parent": "BANGKA",
+    "type": "Kecamatan",
+    "coords": [
+      -2.046403830101984,
+      105.86348902951987
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "PULAUBESAR",
+    "parent": "BANGKA SELATAN",
+    "type": "Kecamatan",
+    "coords": [
+      -2.798680713517929,
+      106.14655819267809
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "RANGKUI",
+    "parent": "KOTA PANGKALPINANG",
+    "type": "Kecamatan",
+    "coords": [
+      -2.1381318595179404,
+      106.10205802168339
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "RIAU SILIP",
+    "parent": "BANGKA",
+    "type": "Kecamatan",
+    "coords": [
+      -1.7542910199544997,
+      105.9281456664585
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "SELAT NASIK",
+    "parent": "BELITUNG",
+    "type": "Kecamatan",
+    "coords": [
+      -2.8845624365254006,
+      107.42213587209439
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "SIJUK",
+    "parent": "BELITUNG",
+    "type": "Kecamatan",
+    "coords": [
+      -2.6267015351138587,
+      107.76819965191544
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "SIMPANG KATIS",
+    "parent": "BANGKA TENGAH",
+    "type": "Kecamatan",
+    "coords": [
+      -2.280774150313199,
+      106.09000628877452
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "SIMPANG PESAK",
+    "parent": "BELITUNG TIMUR",
+    "type": "Kecamatan",
+    "coords": [
+      -3.1619465356865604,
+      108.00575042470548
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "SIMPANG RENGGIANG",
+    "parent": "BELITUNG TIMUR",
+    "type": "Kecamatan",
+    "coords": [
+      -2.881742273501426,
+      107.9915961609703
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "SIMPANG RIMBA",
+    "parent": "BANGKA SELATAN",
+    "type": "Kecamatan",
+    "coords": [
+      -2.629114406168482,
+      105.98841121236563
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "SIMPANG TERITIP",
+    "parent": "BANGKA BARAT",
+    "type": "Kecamatan",
+    "coords": [
+      -1.9626505531442355,
+      105.40308346734182
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "SUNGAI SELAN",
+    "parent": "BANGKA TENGAH",
+    "type": "Kecamatan",
+    "coords": [
+      -2.38511136227845,
+      106.01155324970905
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "SUNGAILIAT",
+    "parent": "BANGKA",
+    "type": "Kecamatan",
+    "coords": [
+      -1.8753651083327152,
+      106.12092044165952
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "TAMAN SARI",
+    "parent": "KOTA PANGKALPINANG",
+    "type": "Kecamatan",
+    "coords": [
+      -2.1224423121152554,
+      106.10988809160514
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "TANJUNG PANDAN",
+    "parent": "BELITUNG",
+    "type": "Kecamatan",
+    "coords": [
+      -2.757624811673933,
+      107.69534700206854
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "TEMPILANG",
+    "parent": "BANGKA BARAT",
+    "type": "Kecamatan",
+    "coords": [
+      -2.0421518415016275,
+      105.65762171370979
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "TOBOALI",
+    "parent": "BANGKA SELATAN",
+    "type": "Kecamatan",
+    "coords": [
+      -2.896212127727831,
+      106.4970680877638
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "TUKAK SADAI",
+    "parent": "BANGKA SELATAN",
+    "type": "Kecamatan",
+    "coords": [
+      -3.032034858018337,
+      106.64487234561207
+    ],
+    "zoom": 13
+  },
+  {
+    "name": "BANGKA",
+    "parent": "Provinsi Bangka Belitung",
+    "type": "Kabupaten",
+    "coords": [
+      -1.9058872619275937,
+      105.921232664217
+    ],
+    "zoom": 11
+  },
+  {
+    "name": "BANGKA BARAT",
+    "parent": "Provinsi Bangka Belitung",
+    "type": "Kabupaten",
+    "coords": [
+      -1.8907730148405963,
+      105.48927117785797
+    ],
+    "zoom": 11
+  },
+  {
+    "name": "BANGKA SELATAN",
+    "parent": "Provinsi Bangka Belitung",
+    "type": "Kabupaten",
+    "coords": [
+      -2.7711205190690644,
+      106.34242255169872
+    ],
+    "zoom": 11
+  },
+  {
+    "name": "BANGKA TENGAH",
+    "parent": "Provinsi Bangka Belitung",
+    "type": "Kabupaten",
+    "coords": [
+      -2.4301175449733705,
+      106.24332384370913
+    ],
+    "zoom": 11
+  },
+  {
+    "name": "BELITUNG",
+    "parent": "Provinsi Bangka Belitung",
+    "type": "Kabupaten",
+    "coords": [
+      -2.869945414767015,
+      107.71103155764612
+    ],
+    "zoom": 11
+  },
+  {
+    "name": "BELITUNG TIMUR",
+    "parent": "Provinsi Bangka Belitung",
+    "type": "Kabupaten",
+    "coords": [
+      -2.9071146169287267,
+      108.05237544289551
+    ],
+    "zoom": 11
+  },
+  {
+    "name": "KOTA PANGKALPINANG",
+    "parent": "Provinsi Bangka Belitung",
+    "type": "Kabupaten",
+    "coords": [
+      -2.110664559066382,
+      106.11347772262852
+    ],
+    "zoom": 11
+  }
+]
