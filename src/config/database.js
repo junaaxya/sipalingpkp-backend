@@ -8,6 +8,12 @@ const sequelize = new Sequelize({
   username: process.env.DB_USERNAME || 'root',
   password: process.env.DB_PASSWORD || '',
   dialect: 'mysql',
+  dialectOptions: {
+    ssl: process.env.NODE_ENV === 'production' ? {
+      require: true,
+      rejectUnauthorized: false 
+    } : false
+  },
   logging: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'sandbox' ? console.log : false,
   pool: {
     max: 5,
