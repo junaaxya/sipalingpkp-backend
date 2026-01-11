@@ -43,7 +43,7 @@ module.exports = {
 
     await queryInterface.addIndex('utility_gas', ['facility_survey_id'], {
       unique: true,
-      name: 'uk_survey',
+      name: 'uk_utility_gas_survey',
     });
   },
 
@@ -51,4 +51,5 @@ module.exports = {
     await queryInterface.dropTable('utility_gas');
   },
 };
+
 

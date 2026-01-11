@@ -8,6 +8,14 @@ const {
 } = require('../models');
 const { errorFactory } = require('../errors/errorUtils');
 
+const isTruthyDbValue = (value) => (
+  value === true
+  || value === 1
+  || value === '1'
+  || value === 't'
+  || value === 'true'
+);
+
 /**
  * Check if user can access specific location data
  */
@@ -25,7 +33,7 @@ async function canAccessLocation(userId, locationData) {
       },
     );
 
-    return result[0].can_access === 1;
+    return isTruthyDbValue(result[0]?.can_access);
   } catch (error) {
     throw errorFactory.database('Failed to check location access', error);
   }
@@ -44,9 +52,37 @@ async function hasPermission(userId, permissionName) {
       },
     );
 
-    return result[0].has_permission === 1;
+    return isTruthyDbValue(result[0]?.has_permission);
   } catch (error) {
-    throw errorFactory.database('Failed to check permission', error);
+    try {
+      const rows = await sequelize.query(
+        `
+          SELECT 1
+          FROM user_roles ur
+          JOIN roles r ON ur.role_id = r.id AND r.is_active = true
+          JOIN role_permissions rp
+            ON rp.role_id = r.id
+            AND rp.is_active = true
+            AND (rp.expires_at IS NULL OR rp.expires_at > NOW())
+          JOIN permissions p
+            ON p.id = rp.permission_id
+            AND p.is_active = true
+            AND p.name = :permissionName
+          WHERE ur.user_id = :userId
+            AND ur.is_active = true
+            AND (ur.expires_at IS NULL OR ur.expires_at > NOW())
+          LIMIT 1
+        `,
+        {
+          replacements: { userId, permissionName },
+          type: QueryTypes.SELECT,
+        },
+      );
+
+      return rows.length > 0;
+    } catch (fallbackError) {
+      throw errorFactory.database('Failed to check permission', error);
+    }
   }
 }
 
@@ -63,7 +99,7 @@ async function canAccessResource(userId, resourceType, action, resourceId) {
       },
     );
 
-    return result[0].can_access === 1;
+    return isTruthyDbValue(result[0]?.can_access);
   } catch (error) {
     throw errorFactory.database('Failed to check resource access', error);
   }

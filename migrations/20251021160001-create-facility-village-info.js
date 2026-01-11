@@ -54,7 +54,7 @@ module.exports = {
     // Add unique constraint
     await queryInterface.addIndex('facility_village_info', ['facility_survey_id'], {
       unique: true,
-      name: 'uk_survey',
+      name: 'uk_facility_village_info_survey',
     });
   },
 
@@ -62,4 +62,5 @@ module.exports = {
     await queryInterface.dropTable('facility_village_info');
   },
 };
+
 

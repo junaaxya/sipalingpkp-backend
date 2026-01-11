@@ -47,7 +47,7 @@ module.exports = {
 
     await queryInterface.addIndex('utility_street_lighting', ['facility_survey_id'], {
       unique: true,
-      name: 'uk_survey',
+      name: 'uk_utility_street_lighting_survey',
     });
   },
 
@@ -55,4 +55,5 @@ module.exports = {
     await queryInterface.dropTable('utility_street_lighting');
   },
 };
+
 

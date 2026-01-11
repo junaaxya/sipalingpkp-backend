@@ -37,6 +37,7 @@ app.use(
             'Origin',
             'Idempotency-Key',
             'X-Idempotency-Key',
+            'ngrok-skip-browser-warning',
         ],
     })
 );

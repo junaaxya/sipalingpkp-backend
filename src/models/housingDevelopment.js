@@ -45,6 +45,10 @@ module.exports = (sequelize) => {
       allowNull: true,
       comment: 'GPS longitude',
     },
+    geom: {
+      type: DataTypes.GEOMETRY('POINT', 4326),
+      allowNull: true,
+    },
     housingType: {
       type: DataTypes.ENUM('sederhana', 'menengah', 'mewah', 'campuran'),
       allowNull: false,

@@ -149,6 +149,61 @@ const authSchemas = {
     },
     additionalProperties: false,
   },
+
+  forgotPassword: {
+    type: 'object',
+    required: ['email'],
+    properties: {
+      email: {
+        type: 'string',
+        format: 'email',
+        minLength: 5,
+        maxLength: 255,
+      },
+      method: {
+        type: 'string',
+        enum: ['link', 'otp'],
+      },
+      channel: {
+        type: 'string',
+        enum: ['email', 'whatsapp', 'phone'],
+      },
+    },
+    additionalProperties: false,
+  },
+
+  resetPassword: {
+    type: 'object',
+    required: ['newPassword'],
+    properties: {
+      email: {
+        type: 'string',
+        format: 'email',
+        minLength: 5,
+        maxLength: 255,
+      },
+      token: {
+        type: 'string',
+        minLength: 32,
+        maxLength: 200,
+      },
+      otp: {
+        type: 'string',
+        pattern: '^\\d{6}$',
+      },
+      newPassword: {
+        type: 'string',
+        minLength: 8,
+        maxLength: 128,
+        pattern: '(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=[\\]{};:\'\"\\\\|,.<>/?])',
+      },
+    },
+    oneOf: [
+      { required: ['token'] },
+      { required: ['email', 'otp'] },
+    ],
+    additionalProperties: false,
+  },
 };
 
 /**
@@ -449,6 +504,7 @@ const housingSchemas = {
           headOfFamilyName: { type: 'string', maxLength: 100 },
           headOfFamilyPhone: { type: 'string', maxLength: 20 },
           headOfFamilyAge: integerField,
+          age: integerField,
           familyCardNumber: { type: 'string', maxLength: 20 },
           totalFamilyMembers: integerField,
           houseNumber: { type: 'string', maxLength: 20 },
@@ -467,6 +523,7 @@ const housingSchemas = {
           monthlyIncome: numericField,
           landOwnershipStatus: { type: 'string', enum: ['milik_sendiri', 'bukan_milik_sendiri'] },
           houseOwnershipStatus: { type: 'string', enum: ['milik_sendiri', 'sewa', 'menumpang'] },
+          hasHousingAssistance: { type: ['boolean', 'null'] },
           hasReceivedHousingAssistance: { type: ['boolean', 'null'] },
           housingAssistanceYear: integerField,
           isRegisteredAsPoor: { type: ['boolean', 'null'] },
@@ -706,11 +763,21 @@ const housingSchemas = {
             minimum: 1,
             maximum: 120,
           },
+          headOfFamilyAge: {
+            type: 'integer',
+            minimum: 1,
+            maximum: 120,
+          },
           familyCardNumber: {
             type: 'string',
             maxLength: 50,
           },
           numHouseholdsInHouse: {
+            type: 'integer',
+            minimum: 1,
+            maximum: 20,
+          },
+          totalFamilyMembers: {
             type: 'integer',
             minimum: 1,
             maximum: 20,
@@ -772,6 +839,9 @@ const housingSchemas = {
             enum: ['milik_sendiri', 'sewa', 'menumpang'],
           },
           hasHousingAssistance: {
+            type: 'boolean',
+          },
+          hasReceivedHousingAssistance: {
             type: 'boolean',
           },
           housingAssistanceYear: {
@@ -1099,6 +1169,16 @@ const facilitySchemas = {
         type: 'string',
         minLength: 12,
         maxLength: 12,
+      },
+      latitude: {
+        type: ['number', 'null'],
+        minimum: -90,
+        maximum: 90,
+      },
+      longitude: {
+        type: ['number', 'null'],
+        minimum: -180,
+        maximum: 180,
       },
       status: {
         type: 'string',

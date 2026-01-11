@@ -59,6 +59,20 @@ module.exports = (sequelize) => {
         key: 'id',
       },
     },
+    latitude: {
+      type: DataTypes.DECIMAL(10, 8),
+      allowNull: true,
+      comment: 'GPS latitude',
+    },
+    longitude: {
+      type: DataTypes.DECIMAL(11, 8),
+      allowNull: true,
+      comment: 'GPS longitude',
+    },
+    geom: {
+      type: DataTypes.GEOMETRY('POINT', 4326),
+      allowNull: true,
+    },
     status: {
       type: DataTypes.ENUM('draft', 'submitted', 'verified', 'approved'),
       allowNull: false,
@@ -148,6 +162,10 @@ module.exports = (sequelize) => {
       },
       {
         fields: ['verification_status'],
+      },
+      {
+        fields: ['latitude', 'longitude'],
+        name: 'idx_facility_surveys_coordinates',
       },
     ],
   });

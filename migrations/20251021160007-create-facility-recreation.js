@@ -58,7 +58,7 @@ module.exports = {
 
     await queryInterface.addIndex('facility_recreation', ['facility_survey_id'], {
       unique: true,
-      name: 'uk_survey',
+      name: 'uk_facility_recreation_survey',
     });
   },
 
@@ -66,4 +66,5 @@ module.exports = {
     await queryInterface.dropTable('facility_recreation');
   },
 };
+
 

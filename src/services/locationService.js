@@ -1,11 +1,10 @@
-const fs = require('fs/promises');
-const path = require('path');
-const turf = require('@turf/turf');
+const { QueryTypes, Op } = require('sequelize');
 const {
   Province,
   Regency,
   District,
   Village,
+  sequelize,
 } = require('../models');
 const { errorFactory } = require('../errors/errorUtils');
 
@@ -246,79 +245,53 @@ async function getLocationHierarchy(provinceId, regencyId, districtId, villageId
   return result;
 }
 
-/**
- * Cache for GeoJSON data to avoid reading file multiple times
- */
-let geojsonCache = null;
-let geojsonCachePromise = null;
+const ADMIN_BOUNDARY_CATEGORY = 'administrasi';
+const VILLAGE_BOUNDARY_LAYER = 'batas_desa';
 
-/**
- * Load GeoJSON data from file (with caching)
- */
-async function loadGeoJSON() {
-  if (geojsonCache) {
-    return geojsonCache;
+const parseProperties = (value) => {
+  if (!value) {
+    return {};
   }
-
-  if (geojsonCachePromise) {
-    return geojsonCachePromise;
+  if (typeof value === 'object') {
+    return value;
   }
-
-  const geojsonPath = path.join(
-    __dirname,
-    '../../data_peta_profesional/administrasi/batas_desa.geojson',
-  );
-
-  geojsonCachePromise = fs.readFile(geojsonPath, 'utf8')
-    .then((rawData) => {
-      let geojsonData;
-      try {
-        geojsonData = JSON.parse(rawData);
-      } catch (error) {
-        if (error instanceof SyntaxError) {
-          const parseError = new Error('Invalid GeoJSON format');
-          parseError.statusCode = 500;
-          parseError.code = 'INVALID_GEOJSON';
-          throw parseError;
-        }
-        throw error;
-      }
-
-      geojsonCache = geojsonData;
-      return geojsonData;
-    })
-    .catch((error) => {
-      geojsonCachePromise = null;
-      if (error.code === 'ENOENT') {
-        throw errorFactory.notFound('GeoJSON file');
-      }
-      throw error;
-    });
-
-  return geojsonCachePromise;
-}
-
-/**
- * Verify GeoJSON file exists and return metadata.
- */
-async function getGeoJSONFileStats(filePath) {
-  if (!filePath || typeof filePath !== 'string') {
-    throw errorFactory.validation('GeoJSON file path is required');
-  }
-
   try {
-    const stats = await fs.stat(filePath);
-    if (!stats.isFile()) {
-      throw errorFactory.notFound('GeoJSON file');
-    }
-    return stats;
+    return JSON.parse(value);
   } catch (error) {
-    if (error.code === 'ENOENT') {
-      throw errorFactory.notFound('GeoJSON file');
-    }
-    throw error;
+    return {};
   }
-}
+};
+
+const findPropertyCaseInsensitive = (props, keys = []) => {
+  if (!props || !keys.length) {
+    return null;
+  }
+
+  const normalizedProps = Object.keys(props).reduce((acc, key) => {
+    acc[key.toUpperCase()] = props[key];
+    return acc;
+  }, {});
+
+  for (const key of keys) {
+    const exactValue = props[key];
+    if (exactValue !== undefined && exactValue !== null) {
+      const trimmed = String(exactValue).trim();
+      if (trimmed) {
+        return trimmed;
+      }
+    }
+
+    const fallbackValue = normalizedProps[String(key).toUpperCase()];
+    if (fallbackValue !== undefined && fallbackValue !== null) {
+      const trimmed = String(fallbackValue).trim();
+      if (trimmed) {
+        return trimmed;
+      }
+    }
+  }
+
+  return null;
+};
 
 /**
  * Find location by coordinates (reverse geocoding)
@@ -340,25 +313,28 @@ async function findLocationByCoordinates(latitude, longitude) {
     throw errorFactory.validation('Longitude must be between -180 and 180');
   }
 
-  // Load GeoJSON data
-  const geojsonData = await loadGeoJSON();
+  const rows = await sequelize.query(
+    `SELECT properties
+     FROM spatial_layers
+     WHERE category = :category
+       AND layer_name = :layerName
+       AND ST_Intersects(
+         geom,
+         ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)
+       )
+     LIMIT 1`,
+    {
+      replacements: {
+        category: ADMIN_BOUNDARY_CATEGORY,
+        layerName: VILLAGE_BOUNDARY_LAYER,
+        latitude,
+        longitude,
+      },
+      type: QueryTypes.SELECT,
+    },
+  );
 
-  // Create a point from the coordinates (GeoJSON format: [longitude, latitude])
-  const point = turf.point([longitude, latitude]);
-
-  // Search through features to find which polygon contains the point
-  const matchedFeature = geojsonData.features.find((feature) => {
-    if (feature.geometry && feature.geometry.type === 'Polygon') {
-      const polygon = turf.polygon(feature.geometry.coordinates);
-      return turf.booleanPointInPolygon(point, polygon);
-    }
-    if (feature.geometry && feature.geometry.type === 'MultiPolygon') {
-      const multiPolygon = turf.multiPolygon(feature.geometry.coordinates);
-      return turf.booleanPointInPolygon(point, multiPolygon);
-    }
-    return false;
-  });
-
+  const matchedFeature = rows[0];
   if (!matchedFeature) {
     throw errorFactory.businessLogic(
       'Lokasi di luar wilayah kerja.',
@@ -367,10 +343,25 @@ async function findLocationByCoordinates(latitude, longitude) {
   }
 
   // Extract location data from matched feature
-  const props = matchedFeature.properties;
-  const regencyName = typeof props.KAB_KOTA === 'string' ? props.KAB_KOTA.trim() : '';
-  const districtName = typeof props.KECAMATAN === 'string' ? props.KECAMATAN.trim() : '';
-  const villageName = typeof props.DESA === 'string' ? props.DESA.trim() : '';
+  const props = parseProperties(matchedFeature.properties);
+  const villageName = findPropertyCaseInsensitive(props, [
+    'DESA',
+    'KELURAHAN',
+    'NAMOBJ',
+    'WADMKD',
+    'VILLAGE',
+  ]);
+  const districtName = findPropertyCaseInsensitive(props, [
+    'KECAMATAN',
+    'WADMKC',
+    'DISTRICT',
+  ]);
+  const regencyName = findPropertyCaseInsensitive(props, [
+    'KAB_KOTA',
+    'KABUPATEN',
+    'WADMKK',
+    'REGENCY',
+  ]);
 
   if (!regencyName || !districtName || !villageName) {
     throw errorFactory.notFound('GeoJSON feature tidak memiliki data wilayah lengkap');
@@ -378,19 +369,19 @@ async function findLocationByCoordinates(latitude, longitude) {
 
   // Find village in database by hierarchy (name-based)
   const village = await Village.findOne({
-    where: { name: villageName },
+    where: { name: { [Op.iLike]: villageName } },
     include: [
       {
         model: District,
         as: 'district',
         required: true,
-        where: { name: districtName },
+        where: { name: { [Op.iLike]: districtName } },
         include: [
           {
             model: Regency,
             as: 'regency',
             required: true,
-            where: { name: regencyName },
+            where: { name: { [Op.iLike]: regencyName } },
             include: [
               {
                 model: Province,
@@ -449,5 +440,4 @@ module.exports = {
   getVillageById,
   getLocationHierarchy,
   findLocationByCoordinates,
-  getGeoJSONFileStats,
 };

@@ -158,7 +158,7 @@ module.exports = {
 
     // Add indexes
     await queryInterface.addIndex('housing_developments', ['status'], {
-      name: 'idx_status',
+      name: 'idx_housing_developments_status',
     });
     await queryInterface.addIndex('housing_developments', ['housing_type'], {
       name: 'idx_housing_type',
@@ -178,4 +178,3 @@ module.exports = {
     await queryInterface.dropTable('housing_developments');
   },
 };
-

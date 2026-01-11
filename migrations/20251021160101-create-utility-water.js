@@ -49,7 +49,7 @@ module.exports = {
 
     await queryInterface.addIndex('utility_water', ['facility_survey_id'], {
       unique: true,
-      name: 'uk_survey',
+      name: 'uk_utility_water_survey',
     });
   },
 
@@ -57,4 +57,5 @@ module.exports = {
     await queryInterface.dropTable('utility_water');
   },
 };
+
 

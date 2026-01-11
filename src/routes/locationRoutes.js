@@ -11,6 +11,7 @@ const {
   getLocationHierarchy,
   findLocationByCoordinates,
   getGeoJSONData,
+  getSpatialFeatureById,
   getSearchIndex,
 } = require('../controllers/locationController');
 const { validateRequest } = require('../middleware/validation');
@@ -97,6 +98,13 @@ router.get(
  * @access  Public
  */
 router.get('/map/:category/:filename', getGeoJSONData);
+
+/**
+ * @route   GET /api/locations/feature/:id
+ * @desc    Get spatial feature by id
+ * @access  Public
+ */
+router.get('/feature/:id', getSpatialFeatureById);
 
 /**
  * @route   GET /api/locations/search-index

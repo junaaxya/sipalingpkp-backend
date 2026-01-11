@@ -50,7 +50,7 @@ module.exports = {
 
     await queryInterface.addIndex('utility_telecom', ['facility_survey_id'], {
       unique: true,
-      name: 'uk_survey',
+      name: 'uk_utility_telecom_survey',
     });
   },
 
@@ -58,4 +58,5 @@ module.exports = {
     await queryInterface.dropTable('utility_telecom');
   },
 };
+
 

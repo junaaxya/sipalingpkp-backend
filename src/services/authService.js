@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { nanoid } = require('nanoid');
-const { Op } = require('sequelize');
+const { Op, QueryTypes } = require('sequelize');
 const nodemailer = require('nodemailer');
 const axios = require('axios');
 const {
@@ -29,6 +30,12 @@ const {
 const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS, 10) || 12;
 const OTP_TTL_MS = parseInt(process.env.OTP_TTL_MS, 10) || 10 * 60 * 1000;
 const OTP_RESEND_COOLDOWN_MS = parseInt(process.env.OTP_RESEND_COOLDOWN_MS, 10) || 60 * 1000;
+const PASSWORD_RESET_TTL_MS = parseInt(process.env.PASSWORD_RESET_TTL_MS, 10) || 15 * 60 * 1000;
+const PASSWORD_RESET_RESEND_COOLDOWN_MS = parseInt(
+  process.env.PASSWORD_RESET_RESEND_COOLDOWN_MS,
+  10,
+) || 60 * 1000;
+const PASSWORD_RESET_TTL_MINUTES = Math.max(1, Math.round(PASSWORD_RESET_TTL_MS / 60000));
 
 const isBcryptHash = (value) =>
   typeof value === 'string' && value.startsWith('$2');
@@ -73,6 +80,34 @@ const getOtpCooldownSecondsFromLastSent = (lastSentAt) => {
 
 const getOtpCooldownSeconds = (otpExpiresAt) => (
   getOtpCooldownSecondsFromLastSent(getOtpLastSentAt(otpExpiresAt))
+);
+
+const normalizeResetMethod = (method) => {
+  const normalized = String(method || '').trim().toLowerCase();
+  return normalized === 'otp' ? 'otp' : 'link';
+};
+
+const hashResetToken = (value) => (
+  crypto.createHash('sha256').update(String(value)).digest('hex')
+);
+
+const buildPasswordResetTokenValue = (type, rawToken) => (
+  `${type}:${hashResetToken(rawToken)}`
+);
+
+const getPasswordResetLastSentAt = (expiresAt) => {
+  if (!expiresAt) return null;
+  return new Date(new Date(expiresAt).getTime() - PASSWORD_RESET_TTL_MS);
+};
+
+const getPasswordResetCooldownSecondsFromLastSent = (lastSentAt) => {
+  if (!lastSentAt) return 0;
+  const nextAllowed = lastSentAt.getTime() + PASSWORD_RESET_RESEND_COOLDOWN_MS;
+  return Math.max(0, Math.ceil((nextAllowed - Date.now()) / 1000));
+};
+
+const getPasswordResetCooldownSeconds = (expiresAt) => (
+  getPasswordResetCooldownSecondsFromLastSent(getPasswordResetLastSentAt(expiresAt))
 );
 
 const maskEmail = (email) => {
@@ -151,6 +186,42 @@ const buildOtpEmailHtml = (otpCode) => `
   </div>
 `;
 
+const buildPasswordResetOtpEmailHtml = (otpCode) => `
+  <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2933;">
+    <h2 style="margin-bottom: 8px;">Reset Password SIPALING PKP</h2>
+    <p>Gunakan kode berikut untuk mereset password akun Anda:</p>
+    <div style="font-size: 28px; font-weight: bold; letter-spacing: 6px; margin: 16px 0;">
+      ${otpCode}
+    </div>
+    <p style="margin-bottom: 4px;">Kode berlaku selama ${PASSWORD_RESET_TTL_MINUTES} menit.</p>
+    <p style="color: #6b7280;">Jika Anda tidak meminta reset password ini, abaikan pesan ini.</p>
+  </div>
+`;
+
+const buildPasswordResetLinkEmailHtml = (resetUrl) => `
+  <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #1f2933;">
+    <h2 style="margin-bottom: 8px;">Reset Password SIPALING PKP</h2>
+    <p>Klik tombol di bawah ini untuk mereset password akun Anda:</p>
+    <p style="margin: 20px 0;">
+      <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #1d4ed8; color: #ffffff; text-decoration: none; border-radius: 6px;">
+        Reset Password
+      </a>
+    </p>
+    <p style="word-break: break-all;">Atau gunakan tautan berikut: ${resetUrl}</p>
+    <p style="margin-bottom: 4px;">Tautan berlaku selama ${PASSWORD_RESET_TTL_MINUTES} menit.</p>
+    <p style="color: #6b7280;">Jika Anda tidak meminta reset password ini, abaikan pesan ini.</p>
+  </div>
+`;
+
+const getFrontendBaseUrl = () => {
+  const base = process.env.FRONTEND_BASE_URL || process.env.CLIENT_URL || 'http://localhost:3000';
+  return base.replace(/\/$/, '');
+};
+
+const buildPasswordResetLink = (token) => (
+  `${getFrontendBaseUrl()}/auth/reset-password?token=${encodeURIComponent(token)}`
+);
+
 const sendOtpToProvider = async (user, otpCode, channel) => {
   const resolvedChannel = resolveOtpChannel(user, channel);
 
@@ -211,6 +282,74 @@ const sendOtpToProvider = async (user, otpCode, channel) => {
   };
 };
 
+const sendPasswordResetMessage = async (user, method, channel, payload = {}) => {
+  const resolvedChannel = resolveOtpChannel(user, channel);
+
+  if (resolvedChannel === 'email') {
+    const transport = buildMailTransport();
+    if (!transport) {
+      throw errorFactory.validation('SMTP belum dikonfigurasi', 'smtp');
+    }
+
+    const from = process.env.SMTP_FROM || process.env.SMTP_USER;
+    const subject = 'Reset Password SIPALING PKP';
+    const html = method === 'otp'
+      ? buildPasswordResetOtpEmailHtml(payload.otpCode)
+      : buildPasswordResetLinkEmailHtml(payload.resetUrl);
+
+    await transport.sendMail({
+      from,
+      to: user.email,
+      subject,
+      html,
+    });
+
+    return {
+      channel: 'email',
+      destination: user.email,
+    };
+  }
+
+  const token = process.env.FONNTE_TOKEN;
+  if (!token) {
+    throw errorFactory.validation('Fonnte token belum dikonfigurasi', 'whatsapp');
+  }
+
+  const targetPhone = normalizePhoneNumber(user.phone);
+  if (!targetPhone) {
+    throw errorFactory.validation('Nomor WhatsApp tidak tersedia', 'whatsapp');
+  }
+
+  const message = method === 'otp'
+    ? `Kode reset password SIPALING PKP Anda adalah: ${payload.otpCode}. Berlaku ${PASSWORD_RESET_TTL_MINUTES} menit.`
+    : `Klik tautan berikut untuk reset password SIPALING PKP Anda: ${payload.resetUrl}. Berlaku ${PASSWORD_RESET_TTL_MINUTES} menit.`;
+
+  const maskedToken = `${token.slice(0, 4)}***`;
+  console.log(`[RESET][WA] Sending password reset to ${targetPhone} (token: ${maskedToken})`);
+
+  try {
+    await axios.post('https://api.fonnte.com/send', {
+      target: targetPhone,
+      message,
+    }, {
+      headers: {
+        Authorization: token,
+      },
+    });
+  } catch (error) {
+    const responseData = error?.response?.data || error.message;
+    console.error('[RESET][WA] Fonnte error:', responseData);
+    const resetError = errorFactory.validation('Gagal mengirim reset password WhatsApp', 'whatsapp');
+    resetError.details = { provider: 'fonnte', response: responseData };
+    throw resetError;
+  }
+
+  return {
+    channel: 'whatsapp',
+    destination: targetPhone,
+  };
+};
+
 let citizenEnumEnsured = false;
 let citizenEnumEnsuring = null;
 
@@ -219,11 +358,54 @@ const ensureCitizenUserLevelEnum = async () => {
   if (citizenEnumEnsuring) return citizenEnumEnsuring;
 
   citizenEnumEnsuring = (async () => {
+    const dialect = sequelize.getDialect();
     const queryInterface = sequelize.getQueryInterface();
     const table = await queryInterface.describeTable('users');
     const userLevelMeta = table.user_level || table.userLevel;
     const columnType = String(userLevelMeta?.type || '');
-    if (!columnType.includes('citizen')) {
+    if (columnType.toLowerCase().includes('citizen')) {
+      citizenEnumEnsured = true;
+      return;
+    }
+
+    if (dialect === 'postgres') {
+      const enumRows = await sequelize.query(
+        `
+        SELECT t.typname AS name
+        FROM pg_type t
+        JOIN pg_enum e ON t.oid = e.enumtypid
+        JOIN pg_attribute a ON a.atttypid = t.oid
+        JOIN pg_class c ON c.oid = a.attrelid
+        WHERE c.relname = 'users'
+          AND a.attname = 'user_level'
+        LIMIT 1;
+        `,
+        { type: QueryTypes.SELECT },
+      );
+      const enumType = enumRows?.[0]?.name;
+      if (!enumType) {
+        citizenEnumEnsured = true;
+        return;
+      }
+
+      const existing = await sequelize.query(
+        `
+        SELECT 1
+        FROM pg_enum e
+        JOIN pg_type t ON t.oid = e.enumtypid
+        WHERE t.typname = :enumType
+          AND e.enumlabel = 'citizen'
+        LIMIT 1;
+        `,
+        { replacements: { enumType }, type: QueryTypes.SELECT },
+      );
+
+      if (!existing?.length) {
+        await sequelize.query(
+          `ALTER TYPE "${enumType}" ADD VALUE IF NOT EXISTS 'citizen';`,
+        );
+      }
+    } else if (dialect === 'mysql' || dialect === 'mariadb') {
       await sequelize.query(`
         ALTER TABLE users
         MODIFY user_level ENUM('province', 'regency', 'district', 'village', 'citizen') NOT NULL;
@@ -687,6 +869,212 @@ async function reactivateAccount(email, channel, ipAddress, userAgent) {
   return requestActivationOtp(user, channel, ipAddress, userAgent, { reason: 'reactivate' });
 }
 
+async function requestPasswordReset(email, method, channel, ipAddress, userAgent) {
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+  const resolvedMethod = normalizeResetMethod(method);
+  const normalizedChannel = normalizeOtpChannel(channel);
+  const requestedChannel = channel;
+
+  const user = await User.findOne({
+    where: sequelize.where(
+      sequelize.fn('LOWER', sequelize.col('email')),
+      normalizedEmail,
+    ),
+  });
+
+  if (!user) {
+    await AuditLog.create({
+      userId: null,
+      action: 'password_reset_request',
+      resourceType: 'auth',
+      resourceId: null,
+      ipAddress,
+      userAgent,
+      metadata: {
+        email: normalizedEmail,
+        method: resolvedMethod,
+        channel: normalizedChannel,
+        result: 'user_not_found',
+      },
+    });
+
+    return {
+      method: resolvedMethod,
+      channel: normalizedChannel,
+    };
+  }
+
+  const cooldownSeconds = getPasswordResetCooldownSeconds(user.passwordResetExpiresAt);
+  if (cooldownSeconds > 0) {
+    await AuditLog.create({
+      userId: user.id,
+      action: 'password_reset_request',
+      resourceType: 'auth',
+      resourceId: user.id,
+      ipAddress,
+      userAgent,
+      metadata: {
+        method: resolvedMethod,
+        channel: normalizedChannel,
+        result: 'cooldown',
+        cooldownSeconds,
+      },
+    });
+
+    return {
+      method: resolvedMethod,
+      channel: normalizedChannel,
+      cooldownSeconds,
+      alreadySent: true,
+    };
+  }
+
+  const rawToken = resolvedMethod === 'otp'
+    ? generateOtp()
+    : crypto.randomBytes(32).toString('hex');
+  const expiresAt = new Date(Date.now() + PASSWORD_RESET_TTL_MS);
+  const storedToken = buildPasswordResetTokenValue(resolvedMethod, rawToken);
+
+  user.passwordResetToken = storedToken;
+  user.passwordResetExpiresAt = expiresAt;
+  await user.save();
+
+  const resetUrl = resolvedMethod === 'link' ? buildPasswordResetLink(rawToken) : null;
+  const delivery = await sendPasswordResetMessage(user, resolvedMethod, requestedChannel, {
+    otpCode: resolvedMethod === 'otp' ? rawToken : null,
+    resetUrl,
+  });
+
+  await AuditLog.create({
+    userId: user.id,
+    action: 'password_reset_request',
+    resourceType: 'auth',
+    resourceId: user.id,
+    ipAddress,
+    userAgent,
+    metadata: {
+      method: resolvedMethod,
+      channel: delivery.channel,
+      destination: delivery.channel === 'whatsapp'
+        ? maskPhone(delivery.destination)
+        : maskEmail(delivery.destination),
+    },
+  });
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.info(`[RESET] ${resolvedMethod} via ${delivery.channel} -> ${delivery.destination}`);
+  }
+
+  return {
+    method: resolvedMethod,
+    channel: normalizedChannel,
+    cooldownSeconds: getPasswordResetCooldownSeconds(expiresAt),
+  };
+}
+
+async function resetPassword(payload, ipAddress, userAgent) {
+  const {
+    email,
+    token,
+    otp,
+    newPassword,
+  } = payload || {};
+
+  const isTokenFlow = Boolean(token);
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+  let user = null;
+
+  if (isTokenFlow) {
+    const tokenValue = buildPasswordResetTokenValue('link', token);
+    user = await User.findOne({ where: { passwordResetToken: tokenValue } });
+  } else {
+    user = await User.findOne({
+      where: sequelize.where(
+        sequelize.fn('LOWER', sequelize.col('email')),
+        normalizedEmail,
+      ),
+    });
+  }
+
+  if (!user) {
+    if (isTokenFlow) {
+      throw errorFactory.validation('Token reset tidak valid', 'token');
+    }
+    throw errorFactory.validation('Kode OTP tidak valid', 'otp');
+  }
+
+  if (!user.passwordResetToken || !user.passwordResetExpiresAt) {
+    const field = isTokenFlow ? 'token' : 'otp';
+    const message = isTokenFlow ? 'Token reset tidak valid' : 'Kode OTP tidak valid';
+    throw errorFactory.validation(message, field);
+  }
+
+  if (new Date(user.passwordResetExpiresAt).getTime() < Date.now()) {
+    throw errorFactory.validation('Token reset sudah kedaluwarsa', 'token');
+  }
+
+  if (isTokenFlow) {
+    const expected = buildPasswordResetTokenValue('link', token);
+    if (user.passwordResetToken !== expected) {
+      throw errorFactory.validation('Token reset tidak valid', 'token');
+    }
+  } else {
+    const expected = buildPasswordResetTokenValue('otp', otp);
+    if (user.passwordResetToken !== expected) {
+      throw errorFactory.validation('Kode OTP tidak valid', 'otp');
+    }
+  }
+
+  if (isBcryptHash(user.passwordHash)) {
+    const isSamePassword = await bcrypt.compare(newPassword, user.passwordHash);
+    if (isSamePassword) {
+      throw errorFactory.validation('Password baru tidak boleh sama dengan password lama', 'newPassword');
+    }
+  } else if (user.passwordHash && user.passwordHash === newPassword) {
+    throw errorFactory.validation('Password baru tidak boleh sama dengan password lama', 'newPassword');
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+  await sequelize.transaction(async (transaction) => {
+    await user.update({
+      passwordHash,
+      passwordResetToken: null,
+      passwordResetExpiresAt: null,
+      loginAttempts: 0,
+      lockedUntil: null,
+    }, { transaction });
+
+    await UserSession.update(
+      { isActive: false },
+      { where: { userId: user.id }, transaction },
+    );
+  });
+
+  await AuditLog.create({
+    userId: user.id,
+    action: 'password_reset',
+    resourceType: 'user',
+    resourceId: user.id,
+    ipAddress,
+    userAgent,
+  });
+
+  try {
+    await createNotification(user.id, {
+      type: 'info',
+      category: 'security',
+      title: 'Password Diperbarui',
+      message: 'Password Anda berhasil diperbarui. Jika ini bukan Anda, segera hubungi admin.',
+      link: '/settings',
+    });
+  } catch (notifyError) {
+    console.warn('Failed to notify user about password reset:', notifyError.message);
+  }
+
+  return { userId: user.id };
+}
+
 /**
  * Authenticate user login
  */
@@ -950,6 +1338,8 @@ module.exports = {
   verifyOtp,
   resendOtp,
   reactivateAccount,
+  requestPasswordReset,
+  resetPassword,
   authenticateUser,
   refreshAccessToken,
   signOutUser,

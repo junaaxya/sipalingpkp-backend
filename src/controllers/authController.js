@@ -4,6 +4,8 @@ const {
   verifyOtp,
   resendOtp,
   reactivateAccount,
+  requestPasswordReset,
+  resetPassword: resetUserPassword,
   refreshAccessToken,
   signOutUser,
 } = require('../services/authService');
@@ -123,6 +125,56 @@ const reactivate = asyncErrorHandler(async(req, res) => {
 });
 
 /**
+ * Request password reset (OTP or link)
+ */
+const forgotPassword = asyncErrorHandler(async(req, res) => {
+  const { email, method, channel } = req.body;
+
+  const result = await requestPasswordReset(
+    email,
+    method,
+    channel,
+    req.ip,
+    req.headers['user-agent'],
+  );
+
+  res.json({
+    success: true,
+    message: 'Jika akun terdaftar, instruksi reset password telah dikirim.',
+    data: result,
+  });
+});
+
+/**
+ * Reset password using OTP or token
+ */
+const resetPassword = asyncErrorHandler(async(req, res) => {
+  const {
+    email,
+    token,
+    otp,
+    newPassword,
+  } = req.body;
+
+  const result = await resetUserPassword(
+    {
+      email,
+      token,
+      otp,
+      newPassword,
+    },
+    req.ip,
+    req.headers['user-agent'],
+  );
+
+  res.json({
+    success: true,
+    message: 'Password berhasil diperbarui',
+    data: result,
+  });
+});
+
+/**
  * Sign in user
  */
 const signIn = asyncErrorHandler(async(req, res) => {
@@ -199,6 +251,8 @@ module.exports = {
   verifyAccount,
   resendOtpCode,
   reactivate,
+  forgotPassword,
+  resetPassword,
   refreshToken,
   signOut,
   getProfile,

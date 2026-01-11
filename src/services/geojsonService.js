@@ -1,4 +1,7 @@
+const { QueryTypes } = require('sequelize');
+const { sequelize } = require('../models');
 const { createPointFeature, createFeatureCollection } = require('../utils/geojsonUtils');
+const { errorFactory } = require('../errors/errorUtils');
 const { findSearchIndexEntry } = require('./searchIndexService');
 
 const normalizeVerificationStatus = (value) => {
@@ -123,12 +126,64 @@ const buildHousingDevelopmentsFeature = (development) => {
   });
 };
 
+const resolveFacilityCoordinates = (survey = {}) => {
+  const latValue = survey.latitude ?? survey.lat;
+  const lngValue = survey.longitude ?? survey.lng ?? survey.lon;
+  const latitude = Number(latValue);
+  const longitude = Number(lngValue);
+  if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+    return { latitude, longitude };
+  }
+
+  const geom = survey.geom || survey.get?.('geom');
+  if (geom && Array.isArray(geom.coordinates) && geom.coordinates.length >= 2) {
+    const [geomLng, geomLat] = geom.coordinates;
+    const parsedLat = Number(geomLat);
+    const parsedLng = Number(geomLng);
+    if (Number.isFinite(parsedLat) && Number.isFinite(parsedLng)) {
+      return { latitude: parsedLat, longitude: parsedLng };
+    }
+  }
+
+  return null;
+};
+
 const buildFacilityFeature = async (survey) => {
   const villageName = survey.village?.name || null;
   const districtName = survey.district?.name || null;
   const regencyName = survey.regency?.name || null;
   const provinceName = survey.province?.name || null;
   const name = villageName || districtName || regencyName || 'Infrastruktur Desa';
+
+  const baseProperties = buildBaseProperties({
+    id: survey.id,
+    name,
+    category: 'infrastruktur',
+    status: survey.status,
+    verificationStatus: survey.verificationStatus,
+  });
+  const properties = {
+    ...baseProperties,
+    id: survey.id,
+    status: survey.status,
+    verificationStatus: survey.verificationStatus,
+    surveyYear: survey.surveyYear,
+    surveyPeriod: survey.surveyPeriod,
+    village: villageName,
+    district: districtName,
+    regency: regencyName,
+    province: provinceName,
+  };
+
+  const directCoordinates = resolveFacilityCoordinates(survey);
+  if (directCoordinates) {
+    return createPointFeature({
+      id: survey.id,
+      longitude: directCoordinates.longitude,
+      latitude: directCoordinates.latitude,
+      properties,
+    });
+  }
 
   let searchEntry = null;
   if (villageName) {
@@ -166,26 +221,6 @@ const buildFacilityFeature = async (survey) => {
     return null;
   }
 
-  const baseProperties = buildBaseProperties({
-    id: survey.id,
-    name,
-    category: 'infrastruktur',
-    status: survey.status,
-    verificationStatus: survey.verificationStatus,
-  });
-  const properties = {
-    ...baseProperties,
-    id: survey.id,
-    status: survey.status,
-    verificationStatus: survey.verificationStatus,
-    surveyYear: survey.surveyYear,
-    surveyPeriod: survey.surveyPeriod,
-    village: villageName,
-    district: districtName,
-    regency: regencyName,
-    province: provinceName,
-  };
-
   return createPointFeature({
     id: survey.id,
     longitude: searchEntry.coords[1],
@@ -216,8 +251,166 @@ const facilitiesToGeoJSON = async (surveys) => {
   return createFeatureCollection(features.filter(Boolean), { source: 'facility' });
 };
 
+const parseJsonValue = (value) => {
+  if (!value) {
+    return null;
+  }
+  if (typeof value === 'object') {
+    return value;
+  }
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    return null;
+  }
+};
+
+const buildSpatialFilter = ({ bbox, point }) => {
+  if (bbox) {
+    const {
+      minLng, minLat, maxLng, maxLat,
+    } = bbox;
+    const values = [minLng, minLat, maxLng, maxLat];
+    const isValid = values.every((value) => Number.isFinite(value));
+    if (!isValid) {
+      throw errorFactory.validation('Invalid bbox coordinates');
+    }
+    if (minLng >= maxLng || minLat >= maxLat) {
+      throw errorFactory.validation('Invalid bbox range');
+    }
+
+    return {
+      clause: `AND ST_Intersects(
+        geom,
+        ST_MakeEnvelope(:minLng, :minLat, :maxLng, :maxLat, 4326)
+      )`,
+      replacements: {
+        minLng,
+        minLat,
+        maxLng,
+        maxLat,
+      },
+    };
+  }
+
+  if (point) {
+    const { latitude, longitude } = point;
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      throw errorFactory.validation('Invalid coordinates');
+    }
+    if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+      throw errorFactory.validation('Invalid coordinates');
+    }
+
+    return {
+      clause: `AND ST_Intersects(
+        geom,
+        ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)
+      )`,
+      replacements: {
+        latitude,
+        longitude,
+      },
+    };
+  }
+
+  return { clause: '', replacements: {} };
+};
+
+const getSpatialLayerGeoJSON = async ({
+  category,
+  layerName,
+  bbox,
+  point,
+}) => {
+  if (!category || !layerName) {
+    throw errorFactory.validation('Category and layer name are required');
+  }
+
+  const filter = buildSpatialFilter({ bbox, point });
+  const rows = await sequelize.query(
+    `SELECT id, properties, ST_AsGeoJSON(geom) AS geometry
+     FROM spatial_layers
+     WHERE category = :category
+       AND layer_name = :layerName
+       ${filter.clause}`,
+    {
+      replacements: {
+        category,
+        layerName,
+        ...filter.replacements,
+      },
+      type: QueryTypes.SELECT,
+    },
+  );
+
+  const features = rows
+    .map((row) => {
+      const geometry = parseJsonValue(row.geometry);
+      if (!geometry) {
+        return null;
+      }
+      const properties = parseJsonValue(row.properties) || {};
+      return {
+        type: 'Feature',
+        id: row.id,
+        geometry,
+        properties,
+      };
+    })
+    .filter(Boolean);
+
+  return createFeatureCollection(features, {
+    source: 'spatial-layer',
+    category,
+    layerName,
+  });
+};
+
+const getSpatialFeatureById = async ({ id }) => {
+  if (!id) {
+    throw errorFactory.validation('Spatial feature id is required');
+  }
+
+  const rows = await sequelize.query(
+    `SELECT id, category, layer_name, properties, ST_AsGeoJSON(geom) AS geometry
+     FROM spatial_layers
+     WHERE id = :id
+     LIMIT 1`,
+    {
+      replacements: { id },
+      type: QueryTypes.SELECT,
+    },
+  );
+
+  const row = rows[0];
+  if (!row) {
+    throw errorFactory.notFound('Spatial feature');
+  }
+
+  const geometry = parseJsonValue(row.geometry);
+  if (!geometry) {
+    throw errorFactory.notFound('Spatial feature geometry');
+  }
+
+  const properties = parseJsonValue(row.properties) || {};
+  return {
+    type: 'Feature',
+    id: row.id,
+    geometry,
+    properties: {
+      ...properties,
+      id: row.id,
+      category: row.category,
+      layer_name: row.layer_name,
+    },
+  };
+};
+
 module.exports = {
   housingToGeoJSON,
   housingDevelopmentsToGeoJSON,
   facilitiesToGeoJSON,
+  getSpatialLayerGeoJSON,
+  getSpatialFeatureById,
 };

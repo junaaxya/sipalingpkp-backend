@@ -50,6 +50,8 @@ const UtilityFireDepartment = require('./utilityFireDepartment');
 const UtilityStreetLighting = require('./utilityStreetLighting');
 // Housing Development
 const HousingDevelopment = require('./housingDevelopment');
+// Spatial layers
+const SpatialLayer = require('./spatialLayer');
 
 // Initialize models with sequelize instance
 const models = {
@@ -100,6 +102,8 @@ const models = {
   UtilityStreetLighting: UtilityStreetLighting(sequelize, DataTypes),
   // Housing Development
   HousingDevelopment: HousingDevelopment(sequelize, DataTypes),
+  // Spatial layers
+  SpatialLayer: SpatialLayer(sequelize, DataTypes),
 };
 
 // Define associations

@@ -4,8 +4,8 @@
     "password": "${DB_PASSWORD}",
     "database": "${DB_NAME}",
     "host": "${DB_HOST}",
-    "port": "${DB_PORT}",
-    "dialect": "mysql",
+    "port": "5432",
+    "dialect": "postgres",
     "logging": true
   },
   "test": {
@@ -13,8 +13,8 @@
     "password": "${DB_PASSWORD}",
     "database": "${DB_NAME_TEST}",
     "host": "${DB_HOST}",
-    "port": "${DB_PORT}",
-    "dialect": "mysql",
+    "port": "5432",
+    "dialect": "postgres",
     "logging": false
   },
   "production": {
@@ -22,8 +22,14 @@
     "password": "${DB_PASSWORD}",
     "database": "${DB_NAME_PROD}",
     "host": "${DB_HOST}",
-    "port": "${DB_PORT}",
-    "dialect": "mysql",
-    "logging": false
+    "port": "5432",
+    "dialect": "postgres",
+    "logging": false,
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
   }
 }

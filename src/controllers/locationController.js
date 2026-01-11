@@ -1,7 +1,5 @@
 const path = require('path');
 const fs = require('fs/promises');
-const turf = require('@turf/turf');
-const proj4 = require('proj4');
 const {
   getProvinces,
   getProvinceById,
@@ -13,8 +11,8 @@ const {
   getVillageById,
   getLocationHierarchy,
   findLocationByCoordinates,
-  getGeoJSONFileStats,
 } = require('../services/locationService');
+const { getSpatialLayerGeoJSON, getSpatialFeatureById } = require('../services/geojsonService');
 const { asyncErrorHandler } = require('../errors/errorMiddleware');
 const { errorFactory } = require('../errors/errorUtils');
 
@@ -25,124 +23,89 @@ const ALLOWED_GEOJSON_CATEGORIES = [
   'bencana',
 ];
 const SAFE_FILENAME_REGEX = /^[a-zA-Z0-9_-]+$/;
-const GEOJSON_RESPONSE_CACHE = new Map();
-const PROJ_WGS84 = 'EPSG:4326';
-const PROJ_WEB_MERCATOR = 'EPSG:3857';
-const PROJ_UTM_48N = '+proj=utm +zone=48 +datum=WGS84 +units=m +no_defs';
-const PROJ_UTM_48S = '+proj=utm +zone=48 +south +datum=WGS84 +units=m +no_defs';
-
-const shouldSimplifyGeojson = (stats, geojsonData) => {
-  if (!stats) {
-    return false;
+const SAFE_ID_REGEX = /^[a-zA-Z0-9_-]+$/;
+const toNumber = (value) => {
+  if (value === null || value === undefined || value === '') {
+    return null;
   }
-  const featureCount = geojsonData?.features?.length || 0;
-  return stats.size > 2_000_000 || featureCount > 250;
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : null;
 };
 
-const isGeojsonWgs84 = (geojsonData) => {
-  try {
-    const [minX, minY, maxX, maxY] = turf.bbox(geojsonData);
-    return (
-      minX >= -180 &&
-      maxX <= 180 &&
-      minY >= -90 &&
-      maxY <= 90
-    );
-  } catch (error) {
-    return false;
-  }
-};
-
-const detectGeojsonProjection = (geojsonData) => {
-  try {
-    const [minX, minY, maxX, maxY] = turf.bbox(geojsonData);
-    if (
-      minX >= -180 &&
-      maxX <= 180 &&
-      minY >= -90 &&
-      maxY <= 90
-    ) {
-      return PROJ_WGS84;
-    }
-
-    const maxAbs = Math.max(
-      Math.abs(minX),
-      Math.abs(maxX),
-      Math.abs(minY),
-      Math.abs(maxY),
-    );
-    if (maxAbs > 2000000) {
-      return PROJ_WEB_MERCATOR;
-    }
-
-    const looksLikeUtm =
-      minX >= 100000 &&
-      maxX <= 900000 &&
-      minY >= 0 &&
-      maxY <= 10000000;
-    if (looksLikeUtm) {
-      return minY >= 9000000 ? PROJ_UTM_48S : PROJ_UTM_48N;
-    }
-
-    return PROJ_WGS84;
-  } catch (error) {
-    return PROJ_WGS84;
-  }
-};
-
-const reprojectGeojsonToWgs84 = (geojsonData) => {
-  if (!geojsonData || !Array.isArray(geojsonData.features) || !proj4) {
-    return geojsonData;
+const parseBboxParam = (query) => {
+  if (!query) {
+    return null;
   }
 
-  const source = detectGeojsonProjection(geojsonData);
-  if (source === PROJ_WGS84) {
-    return geojsonData;
+  if (query.bbox !== undefined) {
+    const parts = String(query.bbox)
+      .split(',')
+      .map((part) => Number.parseFloat(part.trim()));
+    if (parts.length !== 4 || parts.some((value) => !Number.isFinite(value))) {
+      return { error: 'Invalid bbox format' };
+    }
+    const [minLng, minLat, maxLng, maxLat] = parts;
+    return {
+      bbox: {
+        minLng,
+        minLat,
+        maxLng,
+        maxLat,
+      },
+    };
   }
 
-  const projectCoord = (coord) => {
-    if (!Array.isArray(coord) || coord.length < 2) {
-      return coord;
-    }
-    if (typeof coord[0] === 'number' && typeof coord[1] === 'number') {
-      const [lon, lat] = proj4(source, PROJ_WGS84, [coord[0], coord[1]]);
-      if (coord.length > 2) {
-        return [lon, lat, ...coord.slice(2)];
-      }
-      return [lon, lat];
-    }
-    return coord.map((item) => projectCoord(item));
-  };
+  const minLng = toNumber(query.minLng);
+  const minLat = toNumber(query.minLat);
+  const maxLng = toNumber(query.maxLng);
+  const maxLat = toNumber(query.maxLat);
+
+  const hasAny = [minLng, minLat, maxLng, maxLat].some((value) => value !== null);
+  if (!hasAny) {
+    return null;
+  }
+
+  const hasAll = [minLng, minLat, maxLng, maxLat].every((value) => value !== null);
+  if (!hasAll) {
+    return { error: 'bbox requires minLng, minLat, maxLng, maxLat' };
+  }
 
   return {
-    ...geojsonData,
-    features: geojsonData.features.map((feature) => {
-      if (!feature?.geometry?.coordinates) {
-        return feature;
-      }
-      return {
-        ...feature,
-        geometry: {
-          ...feature.geometry,
-          coordinates: projectCoord(feature.geometry.coordinates),
-        },
-      };
-    }),
+    bbox: {
+      minLng,
+      minLat,
+      maxLng,
+      maxLat,
+    },
   };
 };
 
-const simplifyGeojson = (geojsonData, stats) => {
-  if (!shouldSimplifyGeojson(stats, geojsonData)) {
-    return geojsonData;
+const parsePointParam = (query) => {
+  if (!query) {
+    return null;
   }
 
-  const isWgs84 = isGeojsonWgs84(geojsonData);
-  const tolerance = isWgs84 ? 0.00005 : 20;
-  return turf.simplify(geojsonData, {
-    tolerance,
-    highQuality: false,
-    mutate: false,
-  });
+  const latitude = toNumber(query.lat ?? query.latitude);
+  const longitude = toNumber(query.lng ?? query.longitude);
+  const hasAny = query.lat !== undefined
+    || query.lng !== undefined
+    || query.latitude !== undefined
+    || query.longitude !== undefined;
+
+  if (!hasAny) {
+    return null;
+  }
+
+  if (latitude === null || longitude === null) {
+    return { error: 'Invalid coordinates' };
+  }
+
+  return {
+    point: {
+      latitude,
+      longitude,
+    },
+  };
 };
 
 /**
@@ -319,39 +282,46 @@ const getGeoJSONDataController = async(req, res, next) => {
       throw errorFactory.validation('Invalid GeoJSON filename');
     }
 
-    const baseDir = path.join(process.cwd(), 'data_peta_profesional', category);
-    const filePath = path.join(baseDir, `${filename}.geojson`);
-    const resolvedBase = path.resolve(baseDir);
-    const resolvedFile = path.resolve(filePath);
-
-    if (!resolvedFile.startsWith(`${resolvedBase}${path.sep}`)) {
-      throw errorFactory.validation('Invalid GeoJSON file path');
+    const bboxResult = parseBboxParam(req.query);
+    if (bboxResult?.error) {
+      throw errorFactory.validation(bboxResult.error);
     }
 
-    const stats = await getGeoJSONFileStats(filePath);
-    const cacheKey = `${category}/${filename}:${stats.mtimeMs}:${stats.size}`;
-    const cached = GEOJSON_RESPONSE_CACHE.get(cacheKey);
-    if (cached) {
-      res.setHeader('Cache-Control', 'public, max-age=86400');
-      res.setHeader('Content-Type', 'application/geo+json');
-      return res.json(cached);
+    const pointResult = parsePointParam(req.query);
+    if (pointResult?.error) {
+      throw errorFactory.validation(pointResult.error);
     }
 
-    res.setHeader('Cache-Control', 'public, max-age=86400');
+    const geojsonData = await getSpatialLayerGeoJSON({
+      category,
+      layerName: filename,
+      bbox: bboxResult?.bbox,
+      point: pointResult?.point,
+    });
+
+    res.setHeader('Cache-Control', 'public, max-age=300');
     res.setHeader('Content-Type', 'application/geo+json');
+    return res.json(geojsonData);
+  } catch (error) {
+    return next(error);
+  }
+};
 
-    const rawData = await fs.readFile(filePath, 'utf8');
-    let geojsonData;
-    try {
-      geojsonData = JSON.parse(rawData);
-    } catch (error) {
-      throw errorFactory.validation('Invalid GeoJSON format');
+/**
+ * Get single spatial feature by id
+ */
+const getSpatialFeatureByIdController = async(req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!id || !SAFE_ID_REGEX.test(id)) {
+      throw errorFactory.validation('Invalid spatial feature id');
     }
 
-    const reprojectedGeojson = reprojectGeojsonToWgs84(geojsonData);
-    const simplifiedGeojson = simplifyGeojson(reprojectedGeojson, stats);
-    GEOJSON_RESPONSE_CACHE.set(cacheKey, simplifiedGeojson);
-    return res.json(simplifiedGeojson);
+    const feature = await getSpatialFeatureById({ id });
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    res.setHeader('Content-Type', 'application/geo+json');
+    return res.json(feature);
   } catch (error) {
     return next(error);
   }
@@ -407,5 +377,6 @@ module.exports = {
   getLocationHierarchy: getLocationHierarchyController,
   findLocationByCoordinates: findLocationByCoordinatesController,
   getGeoJSONData: getGeoJSONDataController,
+  getSpatialFeatureById: getSpatialFeatureByIdController,
   getSearchIndex: getSearchIndexController,
 };

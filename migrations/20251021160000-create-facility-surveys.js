@@ -133,7 +133,7 @@ module.exports = {
       name: 'idx_province',
     });
     await queryInterface.addIndex('facility_surveys', ['status'], {
-      name: 'idx_status',
+      name: 'idx_facility_surveys_status',
     });
   },
 
@@ -141,4 +141,3 @@ module.exports = {
     await queryInterface.dropTable('facility_surveys');
   },
 };
-

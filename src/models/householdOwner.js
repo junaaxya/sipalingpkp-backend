@@ -228,6 +228,10 @@ module.exports = (sequelize) => {
         max: 180,
       },
     },
+    geom: {
+      type: DataTypes.GEOMETRY('POINT', 4326),
+      allowNull: true,
+    },
   }, {
     tableName: 'household_owners',
     underscored: true,

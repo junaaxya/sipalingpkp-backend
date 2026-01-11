@@ -78,6 +78,9 @@ web_modules/
 .next
 out
 
+data_shapefile/
+
+
 # Nuxt.js build / generate output
 .nuxt
 dist
@@ -143,3 +146,8 @@ playground/
 
 # Uploaded files
 uploads/
+
+# GIS / shapefile dumps
+data_shapefile/
+*.sql
+

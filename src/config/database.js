@@ -3,17 +3,17 @@ require('dotenv').config();
 
 const sequelize = new Sequelize({
   host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 3306,
+  port: process.env.DB_PORT || 5432,
   database: process.env.DB_NAME || 'sipaling_pkp',
   username: process.env.DB_USERNAME || 'root',
   password: process.env.DB_PASSWORD || '',
-  dialect: 'mysql',
-  dialectOptions: {
-    ssl: process.env.NODE_ENV === 'production' ? {
+  dialect: 'postgres',
+  dialectOptions: (process.env.DB_SSL === 'true' || process.env.NODE_ENV === 'production') ? {
+    ssl: {
       require: true,
-      rejectUnauthorized: false 
-    } : false
-  },
+      rejectUnauthorized: false,
+    },
+  } : {},
   logging: process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'sandbox' ? console.log : false,
   pool: {
     max: 5,

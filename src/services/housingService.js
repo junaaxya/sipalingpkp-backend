@@ -1,9 +1,8 @@
-const { Op } = require('sequelize');
+const { Op, QueryTypes } = require('sequelize');
 const fs = require('fs/promises');
 const fsSync = require('fs');
 const path = require('path');
 const turf = require('@turf/turf');
-const proj4 = require('proj4');
 const {
   FormRespondent,
   HouseholdOwner,
@@ -28,6 +27,7 @@ const {
 } = require('../utils/lodashUtils');
 const { errorFactory } = require('../errors/errorUtils');
 const { saveFile, getPublicUrl } = require('../utils/fileUpload');
+const { getYearExpression, getMonthExpression } = require('../utils/sqlDateUtils');
 const {
   createNotification,
   createNotificationsForUsers,
@@ -35,6 +35,12 @@ const {
 } = require('./notificationService');
 const { findLocationByCoordinates } = require('./locationService');
 const { enforceExportLocationScope } = require('./exportScopeUtils');
+const {
+  parseGisLayerFilters,
+  buildSpatialLayerIntersectsSql,
+  buildSpatialLayerWhereSql,
+  formatGisLayerLabel,
+} = require('./spatialExportUtils');
 const {
   isMasyarakat,
   isSuperAdmin,
@@ -51,6 +57,31 @@ const pickDefined = (payload) => Object.fromEntries(
   Object.entries(payload || {}).filter(([, value]) => value !== undefined),
 );
 
+const normalizeBoolean = (value, fallback = undefined) => {
+  if (value === undefined || value === null) return fallback;
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value === 1;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (['true', '1', 'ya', 'yes'].includes(normalized)) return true;
+    if (['false', '0', 'tidak', 'no'].includes(normalized)) return false;
+  }
+  return fallback;
+};
+
+const normalizeCoordinateValue = (value) => {
+  if (value === undefined) return undefined;
+  if (value === null || value === '') return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const buildPointGeom = (latitude, longitude) => {
+  if (latitude === undefined && longitude === undefined) return undefined;
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+  return sequelize.fn('ST_SetSRID', sequelize.fn('ST_MakePoint', longitude, latitude), 4326);
+};
+
 const attachPhotoUrls = (photos) => {
   if (!Array.isArray(photos)) return;
   photos.forEach((photo) => {
@@ -58,6 +89,19 @@ const attachPhotoUrls = (photos) => {
     if (!relativePath || photo?.fileUrl) return;
     photo.fileUrl = getPublicUrl(relativePath);
   });
+};
+
+const appendNonHistoryFilter = (whereClause, alias = 'FormSubmission') => {
+  if (sequelize.getDialect() === 'postgres') {
+    const historyValue = sequelize.escape('history');
+    whereClause[Op.and] = [
+      ...(whereClause[Op.and] || []),
+      sequelize.literal(`"${alias}"."status"::text != ${historyValue}`),
+    ];
+    return;
+  }
+
+  whereClause.status = { [Op.ne]: 'history' };
 };
 
 const resolveGisLayerPath = (layerName) => {
@@ -89,179 +133,6 @@ const resolveGisLayerPath = (layerName) => {
   return null;
 };
 
-const PROJ_WGS84 = 'EPSG:4326';
-const PROJ_WEB_MERCATOR = 'EPSG:3857';
-const PROJ_UTM_48N = '+proj=utm +zone=48 +datum=WGS84 +units=m +no_defs';
-const PROJ_UTM_48S = '+proj=utm +zone=48 +south +datum=WGS84 +units=m +no_defs';
-
-const webMercatorToLatLng = (x, y) => {
-  const radius = 6378137;
-  const lon = (x / radius) * (180 / Math.PI);
-  const lat =
-    (2 * Math.atan(Math.exp(y / radius)) - Math.PI / 2) * (180 / Math.PI);
-  return [lat, lon];
-};
-
-const utmToLatLng = (easting, northing, zoneNumber, isSouthernHemisphere) => {
-  const a = 6378137;
-  const e = 0.0818191908;
-  const e1sq = (e * e) / (1 - e * e);
-  const k0 = 0.9996;
-  const x = easting - 500000;
-  let y = northing;
-
-  if (isSouthernHemisphere) {
-    y -= 10000000;
-  }
-
-  const m = y / k0;
-  const mu =
-    m /
-    (a *
-      (1 -
-        Math.pow(e, 2) / 4 -
-        (3 * Math.pow(e, 4)) / 64 -
-        (5 * Math.pow(e, 6)) / 256));
-  const e1 = (1 - Math.sqrt(1 - e * e)) / (1 + Math.sqrt(1 - e * e));
-
-  const j1 = (3 * e1) / 2 - (27 * Math.pow(e1, 3)) / 32;
-  const j2 = (21 * Math.pow(e1, 2)) / 16 - (55 * Math.pow(e1, 4)) / 32;
-  const j3 = (151 * Math.pow(e1, 3)) / 96;
-  const j4 = (1097 * Math.pow(e1, 4)) / 512;
-
-  const fp =
-    mu +
-    j1 * Math.sin(2 * mu) +
-    j2 * Math.sin(4 * mu) +
-    j3 * Math.sin(6 * mu) +
-    j4 * Math.sin(8 * mu);
-
-  const sinFp = Math.sin(fp);
-  const cosFp = Math.cos(fp);
-  const tanFp = Math.tan(fp);
-
-  const c1 = e1sq * cosFp * cosFp;
-  const t1 = tanFp * tanFp;
-  const r1 = (a * (1 - e * e)) / Math.pow(1 - e * e * sinFp * sinFp, 1.5);
-  const n1 = a / Math.sqrt(1 - e * e * sinFp * sinFp);
-  const d = x / (n1 * k0);
-
-  const q1 = (n1 * tanFp) / r1;
-  const q2 = (d * d) / 2;
-  const q3 =
-    ((5 + 3 * t1 + 10 * c1 - 4 * c1 * c1 - 9 * e1sq) * Math.pow(d, 4)) / 24;
-  const q4 =
-    ((61 + 90 * t1 + 298 * c1 + 45 * t1 * t1 - 252 * e1sq - 3 * c1 * c1) *
-      Math.pow(d, 6)) /
-    720;
-  const lat = fp - q1 * (q2 - q3 + q4);
-
-  const q5 = d;
-  const q6 = ((1 + 2 * t1 + c1) * Math.pow(d, 3)) / 6;
-  const q7 =
-    ((5 - 2 * c1 + 28 * t1 - 3 * c1 * c1 + 8 * e1sq + 24 * t1 * t1) *
-      Math.pow(d, 5)) /
-    120;
-  const lon = (q5 - q6 + q7) / cosFp;
-
-  const lonOrigin = (zoneNumber - 1) * 6 - 180 + 3;
-
-  return [lat * (180 / Math.PI), lonOrigin + lon * (180 / Math.PI)];
-};
-
-const normalizeLatLon = (xValue, yValue) => {
-  const x = Number(xValue);
-  const y = Number(yValue);
-  if (!Number.isFinite(x) || !Number.isFinite(y)) {
-    return null;
-  }
-
-  const isIndoLat = x >= -11 && x <= 6;
-  const isIndoLon = y >= 95 && y <= 141;
-  const isIndoLonFirst = x >= 95 && x <= 141 && y >= -11 && y <= 6;
-
-  if (isIndoLat && isIndoLon) {
-    return { lat: x, lon: y };
-  }
-
-  if (isIndoLonFirst) {
-    return { lat: y, lon: x };
-  }
-
-  if (Math.abs(x) <= 180 && Math.abs(y) <= 90) {
-    return { lat: y, lon: x };
-  }
-
-  const looksLikeUtm = x >= 100000 && x <= 900000 && y >= 0 && y <= 10000000;
-  if (looksLikeUtm) {
-    const isSouthernHemisphere = y >= 9000000;
-    if (proj4) {
-      const source = isSouthernHemisphere ? PROJ_UTM_48S : PROJ_UTM_48N;
-      const [lon, lat] = proj4(source, PROJ_WGS84, [x, y]);
-      return { lat, lon };
-    }
-    const [lat, lon] = utmToLatLng(x, y, 48, isSouthernHemisphere);
-    return { lat, lon };
-  }
-
-  const looksLikeWebMercator = Math.abs(x) > 2000000 || Math.abs(y) > 2000000;
-  if (looksLikeWebMercator) {
-    if (proj4) {
-      const [lon, lat] = proj4(PROJ_WEB_MERCATOR, PROJ_WGS84, [x, y]);
-      return { lat, lon };
-    }
-    const [lat, lon] = webMercatorToLatLng(x, y);
-    return { lat, lon };
-  }
-
-  return { lat: y, lon: x };
-};
-
-const normalizeGeojsonCoordinates = (geojson) => {
-  if (!geojson || !Array.isArray(geojson.features)) {
-    return geojson;
-  }
-
-  const convertCoords = (coords) => {
-    if (!Array.isArray(coords)) {
-      return coords;
-    }
-
-    if (
-      coords.length >= 2 &&
-      typeof coords[0] === 'number' &&
-      typeof coords[1] === 'number'
-    ) {
-      const normalized = normalizeLatLon(coords[0], coords[1]);
-      if (!normalized) {
-        return coords;
-      }
-      if (coords.length > 2) {
-        return [normalized.lon, normalized.lat, ...coords.slice(2)];
-      }
-      return [normalized.lon, normalized.lat];
-    }
-
-    return coords.map((item) => convertCoords(item));
-  };
-
-  return {
-    ...geojson,
-    features: geojson.features.map((feature) => {
-      if (!feature?.geometry?.coordinates) {
-        return feature;
-      }
-      return {
-        ...feature,
-        geometry: {
-          ...feature.geometry,
-          coordinates: convertCoords(feature.geometry.coordinates),
-        },
-      };
-    }),
-  };
-};
-
 const loadGisLayer = async (layerName) => {
   const resolved = resolveGisLayerPath(layerName);
   if (!resolved) {
@@ -278,10 +149,8 @@ const loadGisLayer = async (layerName) => {
     if (!parsed || !Array.isArray(parsed.features)) {
       throw errorFactory.validation('Format GeoJSON tidak valid.');
     }
-    const normalizedGeojson = normalizeGeojsonCoordinates(parsed);
     const payload = {
       geojson: parsed,
-      normalizedGeojson,
       label: resolved.label,
       key: resolved.key,
     };
@@ -409,7 +278,7 @@ async function getFormSubmissions(userLocationScope, options = {}) {
     }
 
     if (!whereClause.status) {
-      whereClause.status = { [Op.ne]: 'history' };
+      appendNonHistoryFilter(whereClause);
     }
 
     if (surveyYear) {
@@ -422,7 +291,7 @@ async function getFormSubmissions(userLocationScope, options = {}) {
         );
         whereClause[Op.and] = [
           ...(whereClause[Op.and] || []),
-          sequelize.where(sequelize.fn('YEAR', dateExpression), parsedYear),
+        sequelize.where(getYearExpression(dateExpression), parsedYear),
         ];
       }
     }
@@ -855,7 +724,7 @@ async function getSubmissionHistoryByOwner(ownerId, userLocationScope = null) {
       'reviewedAt',
       'reviewedBy',
       'submittedAt',
-      [sequelize.literal('FormSubmission.created_at'), 'createdAt'],
+      [sequelize.col('FormSubmission.created_at'), 'createdAt'],
       'isLivable',
       'createdBy',
       'householdOwnerId',
@@ -883,7 +752,7 @@ async function getSubmissionHistoryByOwner(ownerId, userLocationScope = null) {
         required: false,
       },
     ],
-    order: [[sequelize.literal('FormSubmission.submitted_at'), 'DESC'], [sequelize.literal('FormSubmission.created_at'), 'DESC']],
+    order: [[sequelize.col('FormSubmission.submitted_at'), 'DESC'], [sequelize.col('FormSubmission.created_at'), 'DESC']],
   });
 
   return submissions;
@@ -914,14 +783,16 @@ async function updateFormSubmissionInternal(submissionId, updateData, updaterId,
 
   try {
     const householdOwnerData = updateData?.householdOwner || {};
-    const coordsProvided = householdOwnerData.latitude !== undefined
-      && householdOwnerData.longitude !== undefined;
+    const ownerLatitude = normalizeCoordinateValue(householdOwnerData.latitude);
+    const ownerLongitude = normalizeCoordinateValue(householdOwnerData.longitude);
+    const ownerGeom = buildPointGeom(ownerLatitude, ownerLongitude);
+    const coordsProvided = Number.isFinite(ownerLatitude) && Number.isFinite(ownerLongitude);
 
     let resolvedLocation = null;
     if (coordsProvided) {
       resolvedLocation = await findLocationByCoordinates(
-        Number(householdOwnerData.latitude),
-        Number(householdOwnerData.longitude),
+        ownerLatitude,
+        ownerLongitude,
       );
 
       const mismatch = (expected, actual) => expected && actual && expected !== actual;
@@ -973,15 +844,22 @@ async function updateFormSubmissionInternal(submissionId, updateData, updaterId,
       respondentUpdates,
     );
 
+    const hasReceivedHousingAssistance = normalizeBoolean(
+      householdOwnerData.hasReceivedHousingAssistance
+        ?? householdOwnerData.hasHousingAssistance,
+    );
+    const isRegisteredAsPoor = normalizeBoolean(householdOwnerData.isRegisteredAsPoor);
+    const headOfFamilyAge = householdOwnerData.headOfFamilyAge ?? householdOwnerData.age;
     const ownerUpdates = updateData?.householdOwner
       ? pickDefined({
         ownerName: householdOwnerData.ownerName,
         ownerPhone: householdOwnerData.ownerPhone,
         headOfFamilyName: householdOwnerData.headOfFamilyName,
         headOfFamilyPhone: householdOwnerData.headOfFamilyPhone,
-        headOfFamilyAge: householdOwnerData.headOfFamilyAge,
+        headOfFamilyAge,
         familyCardNumber: householdOwnerData.familyCardNumber,
-        totalFamilyMembers: householdOwnerData.totalFamilyMembers,
+        totalFamilyMembers: householdOwnerData.totalFamilyMembers
+          ?? householdOwnerData.numHouseholdsInHouse,
         houseNumber: householdOwnerData.houseNumber,
         rt: householdOwnerData.rt,
         rw: householdOwnerData.rw,
@@ -995,12 +873,13 @@ async function updateFormSubmissionInternal(submissionId, updateData, updaterId,
         monthlyIncome: householdOwnerData.monthlyIncome,
         landOwnershipStatus: householdOwnerData.landOwnershipStatus,
         houseOwnershipStatus: householdOwnerData.houseOwnershipStatus,
-        hasReceivedHousingAssistance: householdOwnerData.hasReceivedHousingAssistance,
+        hasReceivedHousingAssistance,
         housingAssistanceYear: householdOwnerData.housingAssistanceYear,
-        isRegisteredAsPoor: householdOwnerData.isRegisteredAsPoor,
+        isRegisteredAsPoor,
         poorRegistrationAttachment: householdOwnerData.poorRegistrationAttachment,
-        latitude: householdOwnerData.latitude,
-        longitude: householdOwnerData.longitude,
+        latitude: ownerLatitude,
+        longitude: ownerLongitude,
+        geom: ownerGeom,
       })
       : null;
 
@@ -1163,9 +1042,11 @@ function isLivableCheck(formData) {
 
   // 1. Check Luas Bangunan (minimal 7.2 m² per orang)
   // Rumus: luas bangunan / jumlah penghuni >= 7.2
-  if (houseData?.buildingArea && householdOwnerData?.numHouseholdsInHouse) {
+  const totalMembers = householdOwnerData?.totalFamilyMembers
+    ?? householdOwnerData?.numHouseholdsInHouse;
+  if (houseData?.buildingArea && totalMembers) {
     const buildingArea = parseFloat(houseData.buildingArea);
-    const numOccupants = parseInt(householdOwnerData.numHouseholdsInHouse, 10);
+    const numOccupants = parseInt(totalMembers, 10);
 
     if (buildingArea > 0 && numOccupants > 0) {
       const areaPerPerson = buildingArea / numOccupants;
@@ -1251,15 +1132,15 @@ function isLivableCheck(formData) {
 async function submitHousingForm(formData, userId) {
   await ensureFormSubmissionSchema();
 
-  const ownerCoordinates = {
-    latitude: formData.householdOwnerData?.latitude,
-    longitude: formData.householdOwnerData?.longitude,
-  };
+  const ownerLatitude = normalizeCoordinateValue(formData.householdOwnerData?.latitude);
+  const ownerLongitude = normalizeCoordinateValue(formData.householdOwnerData?.longitude);
+  const ownerGeom = buildPointGeom(ownerLatitude, ownerLongitude);
+  const coordsProvided = Number.isFinite(ownerLatitude) && Number.isFinite(ownerLongitude);
   let resolvedLocation = null;
-  if (ownerCoordinates.latitude && ownerCoordinates.longitude) {
+  if (coordsProvided) {
     resolvedLocation = await findLocationByCoordinates(
-      Number(ownerCoordinates.latitude),
-      Number(ownerCoordinates.longitude),
+      ownerLatitude,
+      ownerLongitude,
     );
 
     const mismatch = (expected, actual) => expected && actual && expected !== actual;
@@ -1306,14 +1187,24 @@ async function submitHousingForm(formData, userId) {
 
     const rawFamilyCardNumber = String(formData.householdOwnerData.familyCardNumber || '').trim();
     const familyCardNumber = rawFamilyCardNumber || null;
+    const totalFamilyMembers = formData.householdOwnerData.totalFamilyMembers
+      ?? formData.householdOwnerData.numHouseholdsInHouse;
+    const hasReceivedHousingAssistance = normalizeBoolean(
+      formData.householdOwnerData.hasReceivedHousingAssistance
+        ?? formData.householdOwnerData.hasHousingAssistance,
+      false,
+    );
+    const isRegisteredAsPoor = normalizeBoolean(formData.householdOwnerData.isRegisteredAsPoor, false);
+    const headOfFamilyAge = formData.householdOwnerData.headOfFamilyAge
+      ?? formData.householdOwnerData.age;
     const ownerPayload = pickDefined({
       ownerName: formData.householdOwnerData.ownerName,
       ownerPhone: formData.householdOwnerData.ownerPhone,
       headOfFamilyName: formData.householdOwnerData.headOfFamilyName,
       headOfFamilyPhone: formData.householdOwnerData.headOfFamilyPhone,
-      age: formData.householdOwnerData.age,
+      headOfFamilyAge,
       familyCardNumber: familyCardNumber || undefined,
-      numHouseholdsInHouse: formData.householdOwnerData.numHouseholdsInHouse,
+      totalFamilyMembers,
       address: formData.householdOwnerData.address,
       houseNumber: formData.householdOwnerData.houseNumber,
       rt: formData.householdOwnerData.rt,
@@ -1322,17 +1213,18 @@ async function submitHousingForm(formData, userId) {
       districtId: locationData.districtId,
       regencyId: locationData.regencyId,
       provinceId: locationData.provinceId,
-      latitude: formData.householdOwnerData.latitude,
-      longitude: formData.householdOwnerData.longitude,
+      latitude: ownerLatitude,
+      longitude: ownerLongitude,
+      geom: ownerGeom,
       educationLevel: formData.householdOwnerData.educationLevel,
       educationLevelOther: formData.householdOwnerData.educationLevelOther,
       occupation: formData.householdOwnerData.occupation,
       monthlyIncome: formData.householdOwnerData.monthlyIncome,
       landOwnershipStatus: formData.householdOwnerData.landOwnershipStatus,
       houseOwnershipStatus: formData.householdOwnerData.houseOwnershipStatus,
-      hasHousingAssistance: formData.householdOwnerData.hasHousingAssistance,
+      hasReceivedHousingAssistance,
       housingAssistanceYear: formData.householdOwnerData.housingAssistanceYear,
-      isRegisteredAsPoor: formData.householdOwnerData.isRegisteredAsPoor,
+      isRegisteredAsPoor,
       poorRegistrationAttachment: formData.householdOwnerData.poorRegistrationAttachment,
     });
 
@@ -1714,7 +1606,7 @@ async function getHousingStatistics(userLocationScope, options = {}) {
       );
       whereClause[Op.and] = [
         ...(whereClause[Op.and] || []),
-        sequelize.where(sequelize.fn('YEAR', dateExpression), parsedYear),
+        sequelize.where(getYearExpression(dateExpression), parsedYear),
       ];
     }
   }
@@ -1779,7 +1671,7 @@ async function getHousingStatistics(userLocationScope, options = {}) {
   const monthlyRows = await FormSubmission.findAll({
     where: monthlyWhere,
     attributes: [
-      [sequelize.fn('DATE_FORMAT', dateExpression, '%Y-%m'), 'month'],
+      [getMonthExpression(dateExpression), 'month'],
       [sequelize.fn('COUNT', sequelize.fn('DISTINCT', sequelize.col('FormSubmission.id'))), 'count'],
     ],
     group: ['month'],
@@ -1796,12 +1688,16 @@ async function getHousingStatistics(userLocationScope, options = {}) {
 
   let districtBreakdown = null;
   if (isAdminKabupaten(userLocationScope)) {
+    const districtWhere = {
+      ...whereClause,
+      districtId: { [Op.ne]: null },
+    };
+    if (!districtWhere.status) {
+      appendNonHistoryFilter(districtWhere);
+    }
+
     const districtRows = await FormSubmission.findAll({
-      where: {
-        ...whereClause,
-        districtId: { [Op.ne]: null },
-        status: { [Op.ne]: 'history' },
-      },
+      where: districtWhere,
       attributes: [
         'districtId',
         'status',
@@ -1932,12 +1828,8 @@ async function getGeographicData(userLocationScope, options = {}) {
   }
 }
 
-/**
- * Export form submissions data
- */
-async function exportFormSubmissions(userLocationScope, options = {}) {
+const buildHousingExportContext = async (userLocationScope, options = {}) => {
   const {
-    format = 'json',
     status,
     villageId,
     districtId,
@@ -1950,11 +1842,9 @@ async function exportFormSubmissions(userLocationScope, options = {}) {
   } = options;
   const resolvedGisLayer = gisLayerName || gisLayer || layerName;
 
-  // Build where clause based on user's location access
   const whereClause = {};
   const isMasyarakatUser = isMasyarakat(userLocationScope);
 
-  // Add status filter if provided
   if (status) {
     const normalizedStatus = String(status).toLowerCase();
     if (normalizedStatus === 'under_review') {
@@ -1989,10 +1879,89 @@ async function exportFormSubmissions(userLocationScope, options = {}) {
       );
       whereClause[Op.and] = [
         ...(whereClause[Op.and] || []),
-        sequelize.where(sequelize.fn('YEAR', dateExpression), parsedYear),
+        sequelize.where(getYearExpression(dateExpression), parsedYear),
       ];
     }
   }
+
+  const gisLayerFilters = parseGisLayerFilters(options);
+  const useSpatialFilter = gisLayerFilters.length > 0;
+  const gisLayerLabel = useSpatialFilter ? formatGisLayerLabel(gisLayerFilters) : '';
+  if (useSpatialFilter) {
+    const pointExpression = `COALESCE("householdOwner"."geom", ST_SetSRID(ST_MakePoint("householdOwner"."longitude", "householdOwner"."latitude"), 4326))`;
+    const spatialSql = buildSpatialLayerIntersectsSql(gisLayerFilters, pointExpression);
+    if (spatialSql) {
+      whereClause[Op.and] = [
+        ...(whereClause[Op.and] || []),
+        sequelize.literal(spatialSql),
+      ];
+    }
+  }
+
+  return {
+    whereClause,
+    useSpatialFilter,
+    gisLayerFilters,
+    gisLayerLabel,
+    resolvedGisLayer,
+  };
+};
+
+const loadSubmissionGisLayerMap = async (submissionIds, gisLayerFilters) => {
+  if (!Array.isArray(submissionIds) || submissionIds.length === 0) {
+    return new Map();
+  }
+
+  const whereSql = buildSpatialLayerWhereSql(gisLayerFilters);
+  if (!whereSql) {
+    return new Map();
+  }
+
+  const results = new Map();
+  const chunkSize = 1000;
+
+  for (let i = 0; i < submissionIds.length; i += chunkSize) {
+    const chunk = submissionIds.slice(i, i + chunkSize);
+    const rows = await sequelize.query(
+      `SELECT fs.id AS "id",
+        ARRAY_AGG(DISTINCT sl.category || ':' || sl.layer_name) AS "layers"
+      FROM form_submissions fs
+      JOIN household_owners ho ON fs.household_owner_id = ho.id
+      JOIN spatial_layers sl
+        ON ${whereSql}
+        AND sl.geom IS NOT NULL
+        AND ST_Intersects(
+          COALESCE(ho.geom, ST_SetSRID(ST_MakePoint(ho.longitude, ho.latitude), 4326)),
+          sl.geom
+        )
+      WHERE fs.id IN (:ids)
+      GROUP BY fs.id`,
+      {
+        replacements: { ids: chunk },
+        type: QueryTypes.SELECT,
+      },
+    );
+
+    rows.forEach((row) => {
+      results.set(row.id, Array.isArray(row.layers) ? row.layers : []);
+    });
+  }
+
+  return results;
+};
+
+/**
+ * Export form submissions data
+ */
+async function exportFormSubmissions(userLocationScope, options = {}) {
+  const { format = 'json' } = options;
+  const {
+    whereClause,
+    useSpatialFilter,
+    gisLayerFilters,
+    gisLayerLabel,
+    resolvedGisLayer,
+  } = await buildHousingExportContext(userLocationScope, options);
 
   const submissions = await FormSubmission.findAll({
     where: whereClause,
@@ -2032,7 +2001,7 @@ async function exportFormSubmissions(userLocationScope, options = {}) {
             required: false,
           },
         ],
-        required: false,
+        required: useSpatialFilter,
       },
       {
         model: HouseData,
@@ -2130,9 +2099,41 @@ async function exportFormSubmissions(userLocationScope, options = {}) {
 
   let finalSubmissions = submissions;
 
-  if (resolvedGisLayer) {
+  if (useSpatialFilter && gisLayerFilters.length > 0) {
+    if (gisLayerFilters.length === 1 && gisLayerLabel) {
+      submissions.forEach((submission) => {
+        submission.setDataValue('gisAreaLabel', gisLayerLabel);
+      });
+    } else if (submissions.length > 0) {
+      const submissionIds = submissions.map((submission) => submission.id);
+      const gisLayerMap = await loadSubmissionGisLayerMap(
+        submissionIds,
+        gisLayerFilters,
+      );
+      const labelOrder = gisLayerFilters.map((filter) => ({
+        key: `${filter.category}:${filter.layerName}`,
+        label: formatGisLayerLabel([filter]),
+      }));
+      submissions.forEach((submission) => {
+        const matched = gisLayerMap.get(submission.id) || [];
+        if (!matched.length) {
+          return;
+        }
+        const matchedSet = new Set(matched);
+        const labels = labelOrder
+          .filter((entry) => matchedSet.has(entry.key))
+          .map((entry) => entry.label)
+          .filter(Boolean);
+        if (labels.length > 0) {
+          submission.setDataValue('gisAreaLabel', labels.join(', '));
+        }
+      });
+    }
+  }
+
+  if (resolvedGisLayer && !useSpatialFilter) {
     const gisLayer = await loadGisLayer(resolvedGisLayer);
-    const geojson = gisLayer?.normalizedGeojson || gisLayer?.geojson;
+    const geojson = gisLayer?.geojson;
     const features = Array.isArray(geojson?.features)
       ? geojson.features
       : [];
@@ -2145,22 +2146,15 @@ async function exportFormSubmissions(userLocationScope, options = {}) {
       return [];
     }
 
-    const normalizePoint = (latValue, lonValue) => {
-      const normalized = normalizeLatLon(latValue, lonValue);
-      if (!normalized) {
-        return null;
-      }
-      return { lat: normalized.lat, lon: normalized.lon };
-    };
-
     let matchedCount = 0;
     const invalidSamples = [];
     const outsideSamples = [];
 
     finalSubmissions = submissions.filter((submission) => {
       const owner = submission.householdOwner || {};
-      const normalized = normalizePoint(owner.latitude, owner.longitude);
-      if (!normalized) {
+      const lat = Number(owner.latitude);
+      const lon = Number(owner.longitude);
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
         if (invalidSamples.length < 8) {
           invalidSamples.push({
             id: submission.id,
@@ -2170,7 +2164,7 @@ async function exportFormSubmissions(userLocationScope, options = {}) {
         }
         return false;
       }
-      const point = turf.point([normalized.lon, normalized.lat]);
+      const point = turf.point([lon, lat]);
       const matchedFeature = polygons.find((feature) =>
         turf.booleanPointInPolygon(point, feature)
       );
@@ -2178,8 +2172,8 @@ async function exportFormSubmissions(userLocationScope, options = {}) {
         if (outsideSamples.length < 8) {
           outsideSamples.push({
             id: submission.id,
-            lat: normalized.lat,
-            lon: normalized.lon,
+            lat,
+            lon,
           });
         }
         return false;
@@ -2222,6 +2216,10 @@ async function exportFormSubmissions(userLocationScope, options = {}) {
         district: district.name || '',
         regency: regency.name || '',
         province: province.name || '',
+        gisAreaLabel: submission.gisAreaLabel
+          ?? submission.get?.('gisAreaLabel')
+          ?? submission.dataValues?.gisAreaLabel
+          ?? '',
         houseType: houseData.houseType || '',
         waterSource: waterAccess.drinkingWaterSource || '',
         toiletType: sanitationAccess.toiletType || '',
@@ -2234,6 +2232,38 @@ async function exportFormSubmissions(userLocationScope, options = {}) {
   return finalSubmissions;
 }
 
+const countExportFormSubmissions = async (userLocationScope, options = {}) => {
+  const {
+    whereClause,
+    useSpatialFilter,
+    resolvedGisLayer,
+  } = await buildHousingExportContext(userLocationScope, options);
+
+  if (resolvedGisLayer && !useSpatialFilter) {
+    const items = await exportFormSubmissions(userLocationScope, options);
+    return items.length;
+  }
+
+  const include = [];
+  if (useSpatialFilter) {
+    include.push({
+      model: HouseholdOwner,
+      as: 'householdOwner',
+      attributes: [],
+      required: true,
+    });
+  }
+
+  const match = await FormSubmission.findOne({
+    where: whereClause,
+    include,
+    attributes: ['id'],
+    raw: true,
+  });
+
+  return match ? 1 : 0;
+};
+
 module.exports = {
   getFormSubmissions,
   getFormSubmissionById,
@@ -2245,4 +2275,5 @@ module.exports = {
   getHousingStatistics,
   getGeographicData,
   exportFormSubmissions,
+  countExportFormSubmissions,
 };

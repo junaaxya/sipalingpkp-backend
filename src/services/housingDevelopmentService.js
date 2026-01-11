@@ -1,4 +1,4 @@
-const { Op } = require('sequelize');
+const { Op, QueryTypes } = require('sequelize');
 const {
   HousingDevelopment,
   Province,
@@ -14,6 +14,7 @@ const {
   queryUtils, paginationUtils,
 } = require('../utils/lodashUtils');
 const { errorFactory } = require('../errors/errorUtils');
+const { getYearExpression, getMonthExpression } = require('../utils/sqlDateUtils');
 const {
   createNotification,
   createNotificationsForUsers,
@@ -21,10 +22,29 @@ const {
 } = require('./notificationService');
 const { enforceExportLocationScope } = require('./exportScopeUtils');
 const {
+  parseGisLayerFilters,
+  buildSpatialLayerIntersectsSql,
+  buildSpatialLayerWhereSql,
+  formatGisLayerLabel,
+} = require('./spatialExportUtils');
+const {
   isMasyarakat,
   isSuperAdmin,
   isVerifikator,
 } = require('../utils/accessControl');
+
+const normalizeCoordinateValue = (value) => {
+  if (value === undefined) return undefined;
+  if (value === null || value === '') return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const buildPointGeom = (latitude, longitude) => {
+  if (latitude === undefined && longitude === undefined) return undefined;
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+  return sequelize.fn('ST_SetSRID', sequelize.fn('ST_MakePoint', longitude, latitude), 4326);
+};
 
 const applyUserDisplayName = (user) => {
   if (!user) return;
@@ -36,6 +56,48 @@ const applyUserDisplayName = (user) => {
       user.name = fullName;
     }
   }
+};
+
+const loadHousingDevelopmentGisLayerMap = async (developmentIds, gisLayerFilters) => {
+  if (!Array.isArray(developmentIds) || developmentIds.length === 0) {
+    return new Map();
+  }
+
+  const whereSql = buildSpatialLayerWhereSql(gisLayerFilters);
+  if (!whereSql) {
+    return new Map();
+  }
+
+  const results = new Map();
+  const chunkSize = 1000;
+
+  for (let i = 0; i < developmentIds.length; i += chunkSize) {
+    const chunk = developmentIds.slice(i, i + chunkSize);
+    const rows = await sequelize.query(
+      `SELECT hd.id AS "id",
+        ARRAY_AGG(DISTINCT sl.category || ':' || sl.layer_name) AS "layers"
+      FROM housing_developments hd
+      JOIN spatial_layers sl
+        ON ${whereSql}
+        AND sl.geom IS NOT NULL
+        AND ST_Intersects(
+          COALESCE(hd.geom, ST_SetSRID(ST_MakePoint(hd.longitude, hd.latitude), 4326)),
+          sl.geom
+        )
+      WHERE hd.id IN (:ids)
+      GROUP BY hd.id`,
+      {
+        replacements: { ids: chunk },
+        type: QueryTypes.SELECT,
+      },
+    );
+
+    rows.forEach((row) => {
+      results.set(row.id, Array.isArray(row.layers) ? row.layers : []);
+    });
+  }
+
+  return results;
 };
 
 /**
@@ -76,7 +138,20 @@ async function getHousingDevelopments(userLocationScope, options = {}) {
       );
       whereClause[Op.and] = [
         ...(whereClause[Op.and] || []),
-        sequelize.where(sequelize.fn('YEAR', dateExpression), parsedYear),
+        sequelize.where(getYearExpression(dateExpression), parsedYear),
+      ];
+    }
+  }
+
+  const gisLayerFilters = parseGisLayerFilters(options);
+  const gisLayerLabel = gisLayerFilters.length > 0 ? formatGisLayerLabel(gisLayerFilters) : '';
+  if (gisLayerFilters.length > 0) {
+    const pointExpression = `COALESCE("HousingDevelopment"."geom", ST_SetSRID(ST_MakePoint("HousingDevelopment"."longitude", "HousingDevelopment"."latitude"), 4326))`;
+    const spatialSql = buildSpatialLayerIntersectsSql(gisLayerFilters, pointExpression);
+    if (spatialSql) {
+      whereClause[Op.and] = [
+        ...(whereClause[Op.and] || []),
+        sequelize.literal(spatialSql),
       ];
     }
   }
@@ -185,7 +260,20 @@ async function exportHousingDevelopments(userLocationScope, options = {}) {
       );
       whereClause[Op.and] = [
         ...(whereClause[Op.and] || []),
-        sequelize.where(sequelize.fn('YEAR', dateExpression), parsedYear),
+        sequelize.where(getYearExpression(dateExpression), parsedYear),
+      ];
+    }
+  }
+
+  const gisLayerFilters = parseGisLayerFilters(options);
+  const gisLayerLabel = gisLayerFilters.length > 0 ? formatGisLayerLabel(gisLayerFilters) : '';
+  if (gisLayerFilters.length > 0) {
+    const pointExpression = `COALESCE("HousingDevelopment"."geom", ST_SetSRID(ST_MakePoint("HousingDevelopment"."longitude", "HousingDevelopment"."latitude"), 4326))`;
+    const spatialSql = buildSpatialLayerIntersectsSql(gisLayerFilters, pointExpression);
+    if (spatialSql) {
+      whereClause[Op.and] = [
+        ...(whereClause[Op.and] || []),
+        sequelize.literal(spatialSql),
       ];
     }
   }
@@ -199,7 +287,7 @@ async function exportHousingDevelopments(userLocationScope, options = {}) {
     whereClause.createdBy = userLocationScope.id;
   }
 
-  return HousingDevelopment.findAll({
+  const developments = await HousingDevelopment.findAll({
     where: whereClause,
     include: [
       {
@@ -229,7 +317,107 @@ async function exportHousingDevelopments(userLocationScope, options = {}) {
     ],
     order: [['created_at', 'DESC']],
   });
+
+  if (gisLayerFilters.length > 0) {
+    if (gisLayerFilters.length === 1 && gisLayerLabel) {
+      developments.forEach((development) => {
+        development.setDataValue('gisAreaLabel', gisLayerLabel);
+      });
+    } else if (developments.length > 0) {
+      const developmentIds = developments.map((development) => development.id);
+      const gisLayerMap = await loadHousingDevelopmentGisLayerMap(
+        developmentIds,
+        gisLayerFilters,
+      );
+      const labelOrder = gisLayerFilters.map((filter) => ({
+        key: `${filter.category}:${filter.layerName}`,
+        label: formatGisLayerLabel([filter]),
+      }));
+      developments.forEach((development) => {
+        const matched = gisLayerMap.get(development.id) || [];
+        if (!matched.length) {
+          return;
+        }
+        const matchedSet = new Set(matched);
+        const labels = labelOrder
+          .filter((entry) => matchedSet.has(entry.key))
+          .map((entry) => entry.label)
+          .filter(Boolean);
+        if (labels.length > 0) {
+          development.setDataValue('gisAreaLabel', labels.join(', '));
+        }
+      });
+    }
+  }
+
+  return developments;
 }
+
+const countExportHousingDevelopments = async (userLocationScope, options = {}) => {
+  const {
+    status, housingType, villageId, districtId, regencyId, provinceId, surveyYear,
+  } = options;
+
+  const normalizedStatus = status ? String(status).toLowerCase() : null;
+  const statusFilter = normalizedStatus === 'under_review'
+    ? { [Op.in]: ['under_review', 'verified'] }
+    : normalizedStatus;
+  const scopedLocation = await enforceExportLocationScope(userLocationScope, {
+    villageId,
+    districtId,
+    regencyId,
+    provinceId,
+  });
+  const whereClause = queryUtils.buildLocationWhereClause(userLocationScope, {
+    status: statusFilter,
+    housingType,
+    ...scopedLocation,
+  });
+
+  if (surveyYear) {
+    const parsedYear = Number.parseInt(surveyYear, 10);
+    if (Number.isFinite(parsedYear)) {
+      const dateExpression = sequelize.fn(
+        'COALESCE',
+        sequelize.col('HousingDevelopment.submitted_at'),
+        sequelize.col('HousingDevelopment.created_at'),
+      );
+      whereClause[Op.and] = [
+        ...(whereClause[Op.and] || []),
+        sequelize.where(getYearExpression(dateExpression), parsedYear),
+      ];
+    }
+  }
+
+  const gisLayerFilters = parseGisLayerFilters(options);
+  if (gisLayerFilters.length > 0) {
+    const pointExpression = `COALESCE("HousingDevelopment"."geom", ST_SetSRID(ST_MakePoint("HousingDevelopment"."longitude", "HousingDevelopment"."latitude"), 4326))`;
+    const spatialSql = buildSpatialLayerIntersectsSql(gisLayerFilters, pointExpression);
+    if (spatialSql) {
+      whereClause[Op.and] = [
+        ...(whereClause[Op.and] || []),
+        sequelize.literal(spatialSql),
+      ];
+    }
+  }
+
+  if (normalizedStatus === 'rejected') {
+    delete whereClause.status;
+    whereClause.verificationStatus = 'Rejected';
+  }
+
+  if (isMasyarakat(userLocationScope)) {
+    whereClause.createdBy = userLocationScope.id;
+  }
+
+  const match = await HousingDevelopment.findOne({
+    where: whereClause,
+    attributes: ['id'],
+    raw: true,
+  });
+
+  return match ? 1 : 0;
+};
 
 /**
  * Get housing development by ID
@@ -304,11 +492,15 @@ async function getHousingDevelopmentById(developmentId, userLocationScope = null
  * Create housing development
  */
 async function createHousingDevelopment(developmentData, userId) {
+  const developmentLatitude = normalizeCoordinateValue(developmentData.latitude);
+  const developmentLongitude = normalizeCoordinateValue(developmentData.longitude);
+  const developmentGeom = buildPointGeom(developmentLatitude, developmentLongitude);
+  const coordsProvided = Number.isFinite(developmentLatitude) && Number.isFinite(developmentLongitude);
   let resolvedLocation = null;
-  if (developmentData.latitude && developmentData.longitude) {
+  if (coordsProvided) {
     resolvedLocation = await findLocationByCoordinates(
-      Number(developmentData.latitude),
-      Number(developmentData.longitude),
+      developmentLatitude,
+      developmentLongitude,
     );
 
     const mismatch = (expected, actual) => expected && actual && expected !== actual;
@@ -338,8 +530,9 @@ async function createHousingDevelopment(developmentData, userId) {
     developmentName: developmentData.developmentName,
     developerName: developmentData.developerName,
     landArea: developmentData.landArea,
-    latitude: developmentData.latitude,
-    longitude: developmentData.longitude,
+    latitude: developmentLatitude,
+    longitude: developmentLongitude,
+    geom: developmentGeom,
     housingType: developmentData.housingType,
     plannedUnitCount: developmentData.plannedUnitCount,
     hasRoadAccess: developmentData.hasRoadAccess,
@@ -408,12 +601,19 @@ async function updateHousingDevelopment(developmentId, developmentData, user) {
     throw errorFactory('BAD_REQUEST', 'Only draft developments can be updated');
   }
 
-  await development.update({
+  const nextLatitude = normalizeCoordinateValue(
+    developmentData.latitude ?? development.latitude,
+  );
+  const nextLongitude = normalizeCoordinateValue(
+    developmentData.longitude ?? development.longitude,
+  );
+  const nextGeom = buildPointGeom(nextLatitude, nextLongitude);
+  const updatePayload = {
     developmentName: developmentData.developmentName ?? development.developmentName,
     developerName: developmentData.developerName ?? development.developerName,
     landArea: developmentData.landArea ?? development.landArea,
-    latitude: developmentData.latitude ?? development.latitude,
-    longitude: developmentData.longitude ?? development.longitude,
+    latitude: nextLatitude,
+    longitude: nextLongitude,
     housingType: developmentData.housingType ?? development.housingType,
     plannedUnitCount: developmentData.plannedUnitCount ?? development.plannedUnitCount,
     hasRoadAccess: developmentData.hasRoadAccess ?? development.hasRoadAccess,
@@ -425,7 +625,13 @@ async function updateHousingDevelopment(developmentId, developmentData, user) {
     provinceId: developmentData.provinceId ?? development.provinceId,
     notes: developmentData.notes ?? development.notes,
     updatedBy: updaterId,
-  });
+  };
+
+  if (nextGeom !== undefined) {
+    updatePayload.geom = nextGeom;
+  }
+
+  await development.update(updatePayload);
 
   // Log audit
   await AuditLog.create({
@@ -637,7 +843,7 @@ const getHousingDevelopmentStatistics = async (userLocationScope, options = {}) 
       );
       whereClause[Op.and] = [
         ...(whereClause[Op.and] || []),
-        sequelize.where(sequelize.fn('YEAR', dateExpression), parsedYear),
+        sequelize.where(getYearExpression(dateExpression), parsedYear),
       ];
     }
   }
@@ -688,7 +894,7 @@ const getHousingDevelopmentStatistics = async (userLocationScope, options = {}) 
   const monthlyRows = await HousingDevelopment.findAll({
     where: monthlyWhere,
     attributes: [
-      [sequelize.fn('DATE_FORMAT', dateExpression, '%Y-%m'), 'month'],
+      [getMonthExpression(dateExpression), 'month'],
       [sequelize.fn('COUNT', sequelize.col('HousingDevelopment.id')), 'count'],
     ],
     group: ['month'],
@@ -770,4 +976,5 @@ module.exports = {
   getHousingDevelopmentStatistics,
   deleteHousingDevelopment,
   exportHousingDevelopments,
+  countExportHousingDevelopments,
 };

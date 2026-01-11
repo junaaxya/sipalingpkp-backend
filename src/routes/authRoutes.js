@@ -1,6 +1,14 @@
 const express = require('express');
 const {
-  signUp, signIn, verifyAccount, resendOtpCode, reactivate, refreshToken, signOut,
+  signUp,
+  signIn,
+  verifyAccount,
+  resendOtpCode,
+  reactivate,
+  forgotPassword,
+  resetPassword,
+  refreshToken,
+  signOut,
 } = require('../controllers/authController');
 const {
   initiateGoogleAuth,
@@ -61,6 +69,28 @@ router.post(
   '/reactivate',
   validateRequest('auth', 'reactivate'),
   reactivate,
+);
+
+/**
+ * @route   POST /api/auth/forgot-password
+ * @desc    Request password reset via OTP or link
+ * @access  Public
+ */
+router.post(
+  '/forgot-password',
+  validateRequest('auth', 'forgotPassword'),
+  forgotPassword,
+);
+
+/**
+ * @route   POST /api/auth/reset-password
+ * @desc    Reset password with OTP or token
+ * @access  Public
+ */
+router.post(
+  '/reset-password',
+  validateRequest('auth', 'resetPassword'),
+  resetPassword,
 );
 
 /**

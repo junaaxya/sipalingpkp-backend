@@ -1,4 +1,4 @@
-const { Op } = require('sequelize');
+const { Op, QueryTypes } = require('sequelize');
 const {
   FacilitySurvey,
   FacilityVillageInfo,
@@ -30,18 +30,161 @@ const {
   queryUtils, paginationUtils,
 } = require('../utils/lodashUtils');
 const { errorFactory } = require('../errors/errorUtils');
+const { getMonthExpression } = require('../utils/sqlDateUtils');
 const {
   createNotification,
   createNotificationsForUsers,
   findReviewerUsersForScope,
 } = require('./notificationService');
+const { findSearchIndexEntry } = require('./searchIndexService');
 const { enforceExportLocationScope } = require('./exportScopeUtils');
+const {
+  parseGisLayerFilters,
+  buildSpatialLayerIntersectsSql,
+  buildSpatialLayerWhereSql,
+  formatGisLayerLabel,
+} = require('./spatialExportUtils');
 const {
   isMasyarakat,
   isSuperAdmin,
   isVerifikator,
   isAdminDesa,
 } = require('../utils/accessControl');
+
+const normalizeCoordinateValue = (value) => {
+  if (value === undefined) return undefined;
+  if (value === null || value === '') return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const buildPointGeom = (latitude, longitude) => {
+  if (latitude === undefined && longitude === undefined) return undefined;
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+  return sequelize.fn('ST_SetSRID', sequelize.fn('ST_MakePoint', longitude, latitude), 4326);
+};
+
+const resolveFacilityCoordinates = (surveyData = {}) => {
+  const location = surveyData?.location || {};
+  const hasInput = [
+    location.latitude,
+    location.longitude,
+    location.lat,
+    location.lng,
+    location.lon,
+    surveyData.latitude,
+    surveyData.longitude,
+    surveyData.lat,
+    surveyData.lng,
+    surveyData.lon,
+  ].some((value) => value !== undefined);
+
+  if (!hasInput) {
+    return {
+      latitude: undefined,
+      longitude: undefined,
+      geom: undefined,
+    };
+  }
+
+  const latitude = normalizeCoordinateValue(
+    location.latitude ?? location.lat ?? surveyData.latitude ?? surveyData.lat,
+  );
+  const longitude = normalizeCoordinateValue(
+    location.longitude ?? location.lng ?? location.lon ?? surveyData.longitude ?? surveyData.lng ?? surveyData.lon,
+  );
+
+  return {
+    latitude,
+    longitude,
+    geom: buildPointGeom(latitude, longitude),
+  };
+};
+
+const loadFacilityLocationNames = async (surveyData = {}) => {
+  const villageId = surveyData.villageId || null;
+  const districtId = surveyData.districtId || null;
+  const regencyId = surveyData.regencyId || null;
+  const provinceId = surveyData.provinceId || null;
+
+  const village = villageId
+    ? await Village.findByPk(villageId, { attributes: ['id', 'name', 'districtId'] })
+    : null;
+
+  const resolvedDistrictId = districtId || village?.districtId || null;
+  const district = resolvedDistrictId
+    ? await District.findByPk(resolvedDistrictId, { attributes: ['id', 'name', 'regencyId'] })
+    : null;
+
+  const resolvedRegencyId = regencyId || district?.regencyId || null;
+  const regency = resolvedRegencyId
+    ? await Regency.findByPk(resolvedRegencyId, { attributes: ['id', 'name', 'provinceId'] })
+    : null;
+
+  const resolvedProvinceId = provinceId || regency?.provinceId || null;
+  const province = resolvedProvinceId
+    ? await Province.findByPk(resolvedProvinceId, { attributes: ['id', 'name'] })
+    : null;
+
+  return {
+    villageName: village?.name || null,
+    districtName: district?.name || null,
+    regencyName: regency?.name || null,
+    provinceName: province?.name || null,
+  };
+};
+
+const resolveFacilitySearchCoordinates = async ({
+  villageName,
+  districtName,
+  regencyName,
+  provinceName,
+}) => {
+  let searchEntry = null;
+
+  if (villageName) {
+    searchEntry = await findSearchIndexEntry({
+      type: 'Desa',
+      name: villageName,
+      parentParts: {
+        district: districtName,
+        regency: regencyName,
+      },
+    });
+  }
+
+  if (!searchEntry && districtName) {
+    searchEntry = await findSearchIndexEntry({
+      type: 'Kecamatan',
+      name: districtName,
+      parentParts: {
+        regency: regencyName,
+      },
+    });
+  }
+
+  if (!searchEntry && regencyName) {
+    searchEntry = await findSearchIndexEntry({
+      type: 'Kabupaten',
+      name: regencyName,
+      parentParts: {
+        province: provinceName,
+      },
+    });
+  }
+
+  if (!searchEntry || !Array.isArray(searchEntry.coords)) {
+    return null;
+  }
+
+  const latitude = Number(searchEntry.coords[0]);
+  const longitude = Number(searchEntry.coords[1]);
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+    return null;
+  }
+
+  return { latitude, longitude };
+};
 
 const normalizeFacilityItems = (items = []) => {
   if (!Array.isArray(items)) return null;
@@ -116,6 +259,128 @@ const syncFacilityItems = async (Model, facilitySurveyId, items, transaction) =>
       { transaction },
     );
   }
+};
+
+const buildFacilityAdminMatchSql = () => {
+  const villageExpr = `COALESCE(sl_admin.properties->>'DESA', sl_admin.properties->>'KELURAHAN', sl_admin.properties->>'NAMOBJ', sl_admin.properties->>'WADMKD', sl_admin.properties->>'VILLAGE')`;
+  const districtExpr = `COALESCE(sl_admin.properties->>'KECAMATAN', sl_admin.properties->>'WADMKC', sl_admin.properties->>'DISTRICT')`;
+  const regencyExpr = `COALESCE(sl_admin.properties->>'KAB_KOTA', sl_admin.properties->>'KABUPATEN', sl_admin.properties->>'WADMKK', sl_admin.properties->>'REGENCY')`;
+
+  return `(
+    ("village"."name" IS NOT NULL
+      AND sl_admin.category = 'administrasi'
+      AND sl_admin.layer_name = 'batas_desa'
+      AND UPPER(${villageExpr}) = UPPER("village"."name")
+      AND UPPER(${districtExpr}) = UPPER("district"."name")
+      AND UPPER(${regencyExpr}) = UPPER("regency"."name")
+    )
+    OR ("village"."name" IS NULL
+      AND "district"."name" IS NOT NULL
+      AND sl_admin.category = 'administrasi'
+      AND sl_admin.layer_name = 'batas_kecamatan'
+      AND UPPER(${districtExpr}) = UPPER("district"."name")
+      AND UPPER(${regencyExpr}) = UPPER("regency"."name")
+    )
+    OR ("village"."name" IS NULL
+      AND "district"."name" IS NULL
+      AND "regency"."name" IS NOT NULL
+      AND sl_admin.category = 'administrasi'
+      AND sl_admin.layer_name = 'batas_kabupaten'
+      AND UPPER(${regencyExpr}) = UPPER("regency"."name")
+    )
+  )`;
+};
+
+const buildFacilityAdminIntersectsSql = (gisLayerFilters) => {
+  const hazardSql = buildSpatialLayerIntersectsSql(gisLayerFilters, 'sl_admin.geom');
+  if (!hazardSql) {
+    return null;
+  }
+
+  const adminMatchSql = buildFacilityAdminMatchSql();
+
+  return `EXISTS (
+    SELECT 1
+    FROM spatial_layers sl_admin
+    WHERE ${adminMatchSql}
+      AND ${hazardSql}
+  )`;
+};
+
+const loadFacilityGisLayerMap = async (surveyIds, gisLayerFilters) => {
+  if (!Array.isArray(surveyIds) || surveyIds.length === 0) {
+    return new Map();
+  }
+
+  const pointWhereSql = buildSpatialLayerWhereSql(gisLayerFilters, 'sl');
+  const hazardWhereSql = buildSpatialLayerWhereSql(gisLayerFilters, 'sl_hazard');
+  if (!pointWhereSql || !hazardWhereSql) {
+    return new Map();
+  }
+
+  const results = new Map();
+  const chunkSize = 500;
+
+  for (let i = 0; i < surveyIds.length; i += chunkSize) {
+    const chunk = surveyIds.slice(i, i + chunkSize);
+    const pointRows = await sequelize.query(
+      `SELECT fs.id AS "id",
+        ARRAY_AGG(DISTINCT sl.category || ':' || sl.layer_name) AS "layers"
+      FROM facility_surveys fs
+      JOIN spatial_layers sl
+        ON ${pointWhereSql}
+        AND sl.geom IS NOT NULL
+        AND ST_Intersects(
+          COALESCE(fs.geom, ST_SetSRID(ST_MakePoint(fs.longitude, fs.latitude), 4326)),
+          sl.geom
+        )
+      WHERE fs.id IN (:ids)
+        AND (
+          fs.geom IS NOT NULL
+          OR (fs.latitude IS NOT NULL AND fs.longitude IS NOT NULL)
+        )
+      GROUP BY fs.id`,
+      {
+        replacements: { ids: chunk },
+        type: QueryTypes.SELECT,
+      },
+    );
+
+    pointRows.forEach((row) => {
+      results.set(row.id, Array.isArray(row.layers) ? row.layers : []);
+    });
+
+    const adminMatchSql = buildFacilityAdminMatchSql();
+    const adminRows = await sequelize.query(
+      `SELECT fs.id AS "id",
+        ARRAY_AGG(DISTINCT sl_hazard.category || ':' || sl_hazard.layer_name) AS "layers"
+      FROM facility_surveys fs
+      LEFT JOIN villages village ON fs.village_id = village.id
+      LEFT JOIN districts district ON fs.district_id = district.id
+      LEFT JOIN regencies regency ON fs.regency_id = regency.id
+      JOIN spatial_layers sl_admin
+        ON ${adminMatchSql}
+      JOIN spatial_layers sl_hazard
+        ON ${hazardWhereSql}
+        AND sl_hazard.geom IS NOT NULL
+        AND sl_admin.geom IS NOT NULL
+        AND ST_Intersects(sl_admin.geom, sl_hazard.geom)
+      WHERE fs.id IN (:ids)
+        AND fs.geom IS NULL
+        AND (fs.latitude IS NULL OR fs.longitude IS NULL)
+      GROUP BY fs.id`,
+      {
+        replacements: { ids: chunk },
+        type: QueryTypes.SELECT,
+      },
+    );
+
+    adminRows.forEach((row) => {
+      results.set(row.id, Array.isArray(row.layers) ? row.layers : []);
+    });
+  }
+
+  return results;
 };
 
 /**
@@ -242,7 +507,27 @@ async function exportFacilitySurveys(userLocationScope, options = {}) {
     whereClause.createdBy = userLocationScope.id;
   }
 
-  return FacilitySurvey.findAll({
+  const gisLayerFilters = parseGisLayerFilters(options);
+  const gisLayerLabel = gisLayerFilters.length > 0 ? formatGisLayerLabel(gisLayerFilters) : '';
+  if (gisLayerFilters.length > 0) {
+    const pointExpression = `COALESCE("FacilitySurvey"."geom", ST_SetSRID(ST_MakePoint("FacilitySurvey"."longitude", "FacilitySurvey"."latitude"), 4326))`;
+    const pointSql = buildSpatialLayerIntersectsSql(gisLayerFilters, pointExpression);
+    const adminSql = buildFacilityAdminIntersectsSql(gisLayerFilters);
+    const fallbackSql = adminSql
+      ? `(("FacilitySurvey"."geom" IS NULL AND ("FacilitySurvey"."latitude" IS NULL OR "FacilitySurvey"."longitude" IS NULL)) AND ${adminSql})`
+      : null;
+    const spatialSql = pointSql && fallbackSql
+      ? `(${pointSql} OR ${fallbackSql})`
+      : (pointSql || adminSql);
+    if (spatialSql) {
+      whereClause[Op.and] = [
+        ...(whereClause[Op.and] || []),
+        sequelize.literal(spatialSql),
+      ];
+    }
+  }
+
+  const surveys = await FacilitySurvey.findAll({
     where: whereClause,
     include: [
       {
@@ -366,7 +651,123 @@ async function exportFacilitySurveys(userLocationScope, options = {}) {
     ],
     order: [['created_at', 'DESC']],
   });
+
+  if (gisLayerFilters.length > 0) {
+    if (gisLayerFilters.length === 1 && gisLayerLabel) {
+      surveys.forEach((survey) => {
+        survey.setDataValue('gisAreaLabel', gisLayerLabel);
+      });
+    } else if (surveys.length > 0) {
+      const surveyIds = surveys.map((survey) => survey.id);
+      const gisLayerMap = await loadFacilityGisLayerMap(
+        surveyIds,
+        gisLayerFilters,
+      );
+      const labelOrder = gisLayerFilters.map((filter) => ({
+        key: `${filter.category}:${filter.layerName}`,
+        label: formatGisLayerLabel([filter]),
+      }));
+      surveys.forEach((survey) => {
+        const matched = gisLayerMap.get(survey.id) || [];
+        if (!matched.length) {
+          return;
+        }
+        const matchedSet = new Set(matched);
+        const labels = labelOrder
+          .filter((entry) => matchedSet.has(entry.key))
+          .map((entry) => entry.label)
+          .filter(Boolean);
+        if (labels.length > 0) {
+          survey.setDataValue('gisAreaLabel', labels.join(', '));
+        }
+      });
+    }
+  }
+
+  return surveys;
 }
+
+const countExportFacilitySurveys = async (userLocationScope, options = {}) => {
+  const {
+    status, surveyYear, surveyPeriod, villageId, districtId, regencyId, provinceId,
+  } = options;
+
+  const normalizedStatus = status ? String(status).toLowerCase() : null;
+  const statusFilter = normalizedStatus === 'under_review' ? 'verified' : normalizedStatus;
+  const scopedLocation = await enforceExportLocationScope(userLocationScope, {
+    villageId,
+    districtId,
+    regencyId,
+    provinceId,
+  });
+  const whereClause = queryUtils.buildLocationWhereClause(userLocationScope, {
+    status: statusFilter,
+    surveyYear,
+    surveyPeriod,
+    ...scopedLocation,
+  });
+
+  if (normalizedStatus === 'rejected') {
+    delete whereClause.status;
+    whereClause.verificationStatus = 'Rejected';
+  }
+
+  if (isMasyarakat(userLocationScope)) {
+    whereClause.createdBy = userLocationScope.id;
+  }
+
+  const gisLayerFilters = parseGisLayerFilters(options);
+  if (gisLayerFilters.length > 0) {
+    const pointExpression = `COALESCE("FacilitySurvey"."geom", ST_SetSRID(ST_MakePoint("FacilitySurvey"."longitude", "FacilitySurvey"."latitude"), 4326))`;
+    const pointSql = buildSpatialLayerIntersectsSql(gisLayerFilters, pointExpression);
+    const adminSql = buildFacilityAdminIntersectsSql(gisLayerFilters);
+    const fallbackSql = adminSql
+      ? `(("FacilitySurvey"."geom" IS NULL AND ("FacilitySurvey"."latitude" IS NULL OR "FacilitySurvey"."longitude" IS NULL)) AND ${adminSql})`
+      : null;
+    const spatialSql = pointSql && fallbackSql
+      ? `(${pointSql} OR ${fallbackSql})`
+      : (pointSql || adminSql);
+    if (spatialSql) {
+      whereClause[Op.and] = [
+        ...(whereClause[Op.and] || []),
+        sequelize.literal(spatialSql),
+      ];
+    }
+  }
+
+  const include = [];
+  if (gisLayerFilters.length > 0) {
+    include.push(
+      {
+        model: Village,
+        as: 'village',
+        attributes: [],
+        required: false,
+      },
+      {
+        model: District,
+        as: 'district',
+        attributes: [],
+        required: false,
+      },
+      {
+        model: Regency,
+        as: 'regency',
+        attributes: [],
+        required: false,
+      },
+    );
+  }
+
+  const match = await FacilitySurvey.findOne({
+    where: whereClause,
+    include,
+    attributes: ['id'],
+    raw: true,
+  });
+
+  return match ? 1 : 0;
+};
 
 /**
  * Get facility survey by ID with all related data
@@ -533,6 +934,17 @@ async function createFacilitySurvey(surveyData, userId) {
     const submittedAt = initialStatus === 'submitted'
       ? (Number.isNaN(requestedSubmittedAt?.getTime?.()) ? new Date() : requestedSubmittedAt)
       : null;
+    let { latitude, longitude, geom } = resolveFacilityCoordinates(surveyData);
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      const locationNames = await loadFacilityLocationNames(surveyData);
+      const derivedCoords = await resolveFacilitySearchCoordinates(locationNames);
+      if (derivedCoords) {
+        latitude = derivedCoords.latitude;
+        longitude = derivedCoords.longitude;
+        geom = buildPointGeom(latitude, longitude);
+      }
+    }
+    const hasValidCoords = Number.isFinite(latitude) && Number.isFinite(longitude);
 
     // Create facility survey
     const survey = await FacilitySurvey.create({
@@ -542,6 +954,9 @@ async function createFacilitySurvey(surveyData, userId) {
       districtId: surveyData.districtId,
       regencyId: surveyData.regencyId,
       provinceId: surveyData.provinceId,
+      latitude: hasValidCoords ? latitude : null,
+      longitude: hasValidCoords ? longitude : null,
+      geom: hasValidCoords ? geom : null,
       status: initialStatus,
       verificationStatus: 'Pending',
       submittedAt,
@@ -724,6 +1139,25 @@ async function updateFacilitySurvey(surveyId, surveyData, user) {
 
     const updaterId = typeof user === 'object' ? user.id : user;
     const canReviewEdit = typeof user === 'object' && (isSuperAdmin(user) || isVerifikator(user));
+    let { latitude, longitude, geom } = resolveFacilityCoordinates(surveyData);
+    const hasCoordinateInput = latitude !== undefined || longitude !== undefined || geom !== undefined;
+    const hasValidCoords = Number.isFinite(latitude) && Number.isFinite(longitude);
+    let shouldUpdateCoords = hasCoordinateInput;
+    if (!hasValidCoords) {
+      const locationNames = await loadFacilityLocationNames({
+        villageId: surveyData.villageId ?? survey.villageId,
+        districtId: surveyData.districtId ?? survey.districtId,
+        regencyId: surveyData.regencyId ?? survey.regencyId,
+        provinceId: surveyData.provinceId ?? survey.provinceId,
+      });
+      const derivedCoords = await resolveFacilitySearchCoordinates(locationNames);
+      if (derivedCoords) {
+        latitude = derivedCoords.latitude;
+        longitude = derivedCoords.longitude;
+        geom = buildPointGeom(latitude, longitude);
+        shouldUpdateCoords = true;
+      }
+    }
 
     // Check if survey can be updated (only draft status)
     if (survey.status !== 'draft' && !(canReviewEdit && ['submitted', 'verified'].includes(survey.status))) {
@@ -731,7 +1165,7 @@ async function updateFacilitySurvey(surveyId, surveyData, user) {
     }
 
     // Update facility survey
-    await survey.update({
+    const updatePayload = {
       surveyYear: surveyData.surveyYear ?? survey.surveyYear,
       surveyPeriod: surveyData.surveyPeriod ?? survey.surveyPeriod,
       villageId: surveyData.villageId ?? survey.villageId,
@@ -739,7 +1173,15 @@ async function updateFacilitySurvey(surveyId, surveyData, user) {
       regencyId: surveyData.regencyId ?? survey.regencyId,
       provinceId: surveyData.provinceId ?? survey.provinceId,
       updatedBy: updaterId,
-    }, { transaction });
+    };
+
+    if (shouldUpdateCoords) {
+      updatePayload.latitude = Number.isFinite(latitude) ? latitude : null;
+      updatePayload.longitude = Number.isFinite(longitude) ? longitude : null;
+      updatePayload.geom = Number.isFinite(latitude) && Number.isFinite(longitude) ? geom : null;
+    }
+
+    await survey.update(updatePayload, { transaction });
 
     // Update or create facility village info
     if (surveyData.villageInfo) {
@@ -1160,7 +1602,7 @@ const getFacilityStatistics = async (userLocationScope, options = {}) => {
       ],
     },
     attributes: [
-      [sequelize.fn('DATE_FORMAT', dateExpression, '%Y-%m'), 'month'],
+      [getMonthExpression(dateExpression), 'month'],
       [sequelize.fn('COUNT', sequelize.col('FacilitySurvey.id')), 'count'],
     ],
     group: ['month'],
@@ -1266,4 +1708,5 @@ module.exports = {
   reviewFacilitySurvey,
   getFacilityStatistics,
   exportFacilitySurveys,
+  countExportFacilitySurveys,
 };

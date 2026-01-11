@@ -1,15 +1,18 @@
 const ExcelJS = require('exceljs');
 const { asyncErrorHandler } = require('../errors/errorMiddleware');
 const { errorFactory } = require('../errors/errorUtils');
-const { exportFormSubmissions } = require('../services/housingService');
-const { exportFacilitySurveys } = require('../services/facilityService');
-const { exportHousingDevelopments } = require('../services/housingDevelopmentService');
+const { exportFormSubmissions, countExportFormSubmissions } = require('../services/housingService');
+const { exportFacilitySurveys, countExportFacilitySurveys } = require('../services/facilityService');
+const { exportHousingDevelopments, countExportHousingDevelopments } = require('../services/housingDevelopmentService');
 const { createNotification } = require('../services/notificationService');
 
 const { hasPermission } = require('../services/authFunctionsService');
-const { isAdminDesa } = require('../utils/accessControl');
+const { isAdminDesa, isSuperAdmin } = require('../utils/accessControl');
 
 const ensurePermission = async (req, requiredPermission) => {
+  if (req.user && isSuperAdmin(req.user)) {
+    return;
+  }
   if (req.permissionResults && Object.prototype.hasOwnProperty.call(req.permissionResults, requiredPermission)) {
     if (!req.permissionResults[requiredPermission]) {
       throw errorFactory.authorization('Insufficient permissions');
@@ -50,6 +53,10 @@ const exportHousingData = async (userLocationScope, query) => {
 
   submissions.forEach((submission) => {
     const owner = submission.householdOwner || {};
+    const gisAreaLabel = submission.gisAreaLabel
+      ?? submission.get?.('gisAreaLabel')
+      ?? submission.dataValues?.gisAreaLabel
+      ?? '';
     sheet.addRow({
       id: submission.id,
       ownerName: owner.ownerName || '',
@@ -59,7 +66,7 @@ const exportHousingData = async (userLocationScope, query) => {
       village: owner.village?.name || '',
       district: owner.district?.name || '',
       regency: owner.regency?.name || '',
-      gisAreaLabel: submission.gisAreaLabel || '',
+      gisAreaLabel,
       status: submission.status || '',
       latitude: owner.latitude || '',
       longitude: owner.longitude || '',
@@ -78,6 +85,7 @@ const exportFacilityData = async (userLocationScope, query) => {
     { header: 'ID', key: 'id', width: 14 },
     { header: 'Tahun Survei', key: 'surveyYear', width: 14 },
     { header: 'Periode', key: 'surveyPeriod', width: 12 },
+    { header: 'Keterangan Kawasan', key: 'gisAreaLabel', width: 28 },
     { header: 'Status', key: 'status', width: 14 },
     { header: 'Desa', key: 'village', width: 20 },
     { header: 'Kecamatan', key: 'district', width: 20 },
@@ -85,10 +93,15 @@ const exportFacilityData = async (userLocationScope, query) => {
   ];
 
   surveys.forEach((survey) => {
+    const gisAreaLabel = survey.gisAreaLabel
+      ?? survey.get?.('gisAreaLabel')
+      ?? survey.dataValues?.gisAreaLabel
+      ?? '';
     sheet.addRow({
       id: survey.id,
       surveyYear: survey.surveyYear || '',
       surveyPeriod: survey.surveyPeriod || '',
+      gisAreaLabel,
       status: survey.status || '',
       village: survey.village?.name || '',
       district: survey.district?.name || '',
@@ -111,12 +124,17 @@ const exportHousingDevelopmentData = async (userLocationScope, query) => {
     { header: 'Jenis', key: 'housingType', width: 14 },
     { header: 'Jumlah Unit', key: 'plannedUnitCount', width: 14 },
     { header: 'Luas Lahan', key: 'landArea', width: 14 },
+    { header: 'Keterangan Kawasan', key: 'gisAreaLabel', width: 28 },
     { header: 'Status', key: 'status', width: 14 },
     { header: 'Latitude', key: 'latitude', width: 14 },
     { header: 'Longitude', key: 'longitude', width: 14 },
   ];
 
   developments.forEach((development) => {
+    const gisAreaLabel = development.gisAreaLabel
+      ?? development.get?.('gisAreaLabel')
+      ?? development.dataValues?.gisAreaLabel
+      ?? '';
     sheet.addRow({
       id: development.id,
       developmentName: development.developmentName || '',
@@ -124,6 +142,7 @@ const exportHousingDevelopmentData = async (userLocationScope, query) => {
       housingType: development.housingType || '',
       plannedUnitCount: development.plannedUnitCount || 0,
       landArea: development.landArea || 0,
+      gisAreaLabel,
       status: development.status || '',
       latitude: development.latitude || '',
       longitude: development.longitude || '',
@@ -141,7 +160,40 @@ const exportDataController = asyncErrorHandler(async (req, res) => {
     query.villageId = userLocationScope.assignedVillageId;
   }
   const format = String(query.format || 'excel').toLowerCase();
+  const previewFlag = String(query.preview || query.checkOnly || '').toLowerCase();
+  const isPreview = ['1', 'true', 'yes'].includes(previewFlag);
   delete query.format;
+  delete query.preview;
+  delete query.checkOnly;
+
+  if (isPreview) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    let count = 0;
+
+    switch (type) {
+      case 'housing':
+        await ensurePermission(req, 'export_housing');
+        count = await countExportFormSubmissions(userLocationScope, query);
+        break;
+      case 'facility':
+        await ensurePermission(req, 'export_infrastructure');
+        count = await countExportFacilitySurveys(userLocationScope, query);
+        break;
+      case 'housing-development':
+        await ensurePermission(req, 'export_development');
+        count = await countExportHousingDevelopments(userLocationScope, query);
+        break;
+      default:
+        throw errorFactory.validation('Invalid export type');
+    }
+
+    return res.json({
+      success: true,
+      data: { count },
+    });
+  }
 
   if (format === 'json') {
     let items = [];
