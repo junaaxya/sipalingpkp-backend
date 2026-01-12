@@ -37,6 +37,7 @@ const FEATURE_VILLAGE_KEYS = [
 const FEATURE_DISTRICT_KEYS = ['KECAMATAN', 'WADMKC', 'DISTRICT'];
 const FEATURE_REGENCY_KEYS = ['KAB_KOTA', 'KABUPATEN', 'WADMKK', 'REGENCY'];
 const IS_POSTGRES = sequelize.getDialect() === 'postgres';
+const DEFER_FORM_SUBMISSION_LINKS = IS_POSTGRES;
 
 const normalize = (value) =>
     String(value || '')
@@ -341,7 +342,7 @@ const generateRandomCoordinates = (geojson, village) => {
     return getRandomPointInFeature(feature, 40);
 };
 
-const buildOwnerRecord = (data, village, coords, ownerColumns) => {
+const buildOwnerRecord = (data, village, coords, ownerColumns, options = {}) => {
     const now = new Date();
     const record = {
         id: data.ownerId,
@@ -365,7 +366,9 @@ const buildOwnerRecord = (data, village, coords, ownerColumns) => {
     }
 
     if (ownerColumns.form_submission_id && data.formSubmissionId) {
-        record.form_submission_id = data.formSubmissionId;
+        if (!options.deferFormSubmissionLink) {
+            record.form_submission_id = data.formSubmissionId;
+        }
     }
 
     if (ownerColumns.latitude && coords) {
@@ -393,7 +396,7 @@ const buildOwnerRecord = (data, village, coords, ownerColumns) => {
     return record;
 };
 
-const buildHouseDataRecord = (data, houseDataColumns) => {
+const buildHouseDataRecord = (data, houseDataColumns, options = {}) => {
     const now = new Date();
     const record = {
         id: data.houseDataId,
@@ -412,7 +415,9 @@ const buildHouseDataRecord = (data, houseDataColumns) => {
     }
 
     if (houseDataColumns.form_submission_id && data.formSubmissionId) {
-        record.form_submission_id = data.formSubmissionId;
+        if (!options.deferFormSubmissionLink) {
+            record.form_submission_id = data.formSubmissionId;
+        }
     }
 
     return record;
@@ -490,6 +495,49 @@ const bulkInsertInBatches = async (
     }
 };
 
+const bulkUpdateFormSubmissionLinks = async (
+    queryInterface,
+    tableName,
+    links,
+    options
+) => {
+    if (!links.length) {
+        return;
+    }
+
+    const table = queryInterface?.queryGenerator?.quoteTable
+        ? queryInterface.queryGenerator.quoteTable(tableName)
+        : (queryInterface?.quoteTable
+            ? queryInterface.quoteTable(tableName)
+            : `"${tableName}"`);
+
+    for (let start = 0; start < links.length; start += BATCH_SIZE) {
+        const chunk = links.slice(start, start + BATCH_SIZE);
+        const values = [];
+        const replacements = {};
+
+        chunk.forEach((item, index) => {
+            const idKey = `id_${start}_${index}`;
+            const formKey = `form_${start}_${index}`;
+            values.push(`(:${idKey}, :${formKey})`);
+            replacements[idKey] = item.recordId;
+            replacements[formKey] = item.formSubmissionId;
+        });
+
+        const sql = `
+            UPDATE ${table} AS t
+            SET form_submission_id = v.form_submission_id
+            FROM (VALUES ${values.join(', ')}) AS v(id, form_submission_id)
+            WHERE t.id = v.id
+        `;
+
+        await sequelize.query(sql, {
+            replacements,
+            transaction: options?.transaction,
+        });
+    }
+};
+
 const appendMissingVillageLog = async (fileName, missingVillages) => {
     if (!missingVillages.size) {
         return;
@@ -553,6 +601,7 @@ const importFile = async (filePath, context) => {
     const formSubmissionRecords = [];
     const ownerRecords = [];
     const houseDataRecords = [];
+    const submissionLinks = [];
     const missingVillageNames = new Set();
     const regencyCounts = new Map();
     const failures = [];
@@ -675,15 +724,22 @@ const importFile = async (filePath, context) => {
                     { ...ownerData, formSubmissionId },
                     village,
                     coords,
-                    context.ownerColumns
+                    context.ownerColumns,
+                    { deferFormSubmissionLink: context.deferFormSubmissionLink }
                 )
             );
             houseDataRecords.push(
                 buildHouseDataRecord(
                     { address, formSubmissionId, houseDataId },
-                    context.houseDataColumns
+                    context.houseDataColumns,
+                    { deferFormSubmissionLink: context.deferFormSubmissionLink }
                 )
             );
+            submissionLinks.push({
+                formSubmissionId,
+                ownerId,
+                houseDataId,
+            });
 
             addToRegencyCount(
                 regencyCounts,
@@ -721,6 +777,32 @@ const importFile = async (filePath, context) => {
             transaction: context.transaction,
         }
     );
+
+    if (context.deferFormSubmissionLink) {
+        await bulkUpdateFormSubmissionLinks(
+            context.queryInterface,
+            'household_owners',
+            submissionLinks.map((item) => ({
+                recordId: item.ownerId,
+                formSubmissionId: item.formSubmissionId,
+            })),
+            {
+                transaction: context.transaction,
+            }
+        );
+
+        await bulkUpdateFormSubmissionLinks(
+            context.queryInterface,
+            'house_data',
+            submissionLinks.map((item) => ({
+                recordId: item.houseDataId,
+                formSubmissionId: item.formSubmissionId,
+            })),
+            {
+                transaction: context.transaction,
+            }
+        );
+    }
 
     const fileName = path.basename(filePath);
     console.log(
@@ -806,6 +888,7 @@ const run = async () => {
                     ownerColumns,
                     houseDataColumns,
                     importUserId,
+                    deferFormSubmissionLink: DEFER_FORM_SUBMISSION_LINKS,
                     transaction,
                 });
 
