@@ -731,10 +731,10 @@ const run = async () => {
         let grandTotal = 0;
         const transaction = await sequelize.transaction();
         try {
-            await sequelize.query('SET FOREIGN_KEY_CHECKS = 0', {
-                transaction,
-                raw: true,
-            });
+            // await sequelize.query('SET FOREIGN_KEY_CHECKS = 0', {
+            //     transaction,
+            //     raw: true,
+            // });
 
             for (const file of files) {
                 const result = await importFile(file, {
@@ -763,17 +763,17 @@ const run = async () => {
                 }
             }
 
-            await sequelize.query('SET FOREIGN_KEY_CHECKS = 1', {
-                transaction,
-                raw: true,
-            });
+            // await sequelize.query('SET FOREIGN_KEY_CHECKS = 1', {
+            //     transaction,
+            //     raw: true,
+            // });
             await transaction.commit();
         } catch (error) {
             try {
-                await sequelize.query('SET FOREIGN_KEY_CHECKS = 1', {
-                    transaction,
-                    raw: true,
-                });
+                // await sequelize.query('SET FOREIGN_KEY_CHECKS = 1', {
+                //     transaction,
+                //     raw: true,
+                // });
             } catch (resetError) {
                 console.warn(
                     'Gagal mengaktifkan kembali FOREIGN_KEY_CHECKS:',
