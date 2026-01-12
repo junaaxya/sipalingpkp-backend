@@ -27,6 +27,16 @@ const VILLAGE_ALIASES = {
     tuatunu: 'Tua Tunu',
     paritlalang: 'Parit Lalang',
 };
+const FEATURE_VILLAGE_KEYS = [
+    'DESA',
+    'KELURAHAN',
+    'NAMOBJ',
+    'WADMKD',
+    'VILLAGE',
+];
+const FEATURE_DISTRICT_KEYS = ['KECAMATAN', 'WADMKC', 'DISTRICT'];
+const FEATURE_REGENCY_KEYS = ['KAB_KOTA', 'KABUPATEN', 'WADMKK', 'REGENCY'];
+const IS_POSTGRES = sequelize.getDialect() === 'postgres';
 
 const normalize = (value) =>
     String(value || '')
@@ -80,6 +90,24 @@ const getRowValue = (row, keys) => {
         const normalizedKey = normalizeHeaderKey(key);
         if (Object.prototype.hasOwnProperty.call(row, normalizedKey)) {
             return row[normalizedKey];
+        }
+    }
+    return '';
+};
+
+const findPropertyCaseInsensitive = (props, keys) => {
+    if (!props) {
+        return '';
+    }
+    const lookup = Object.keys(props).reduce((acc, key) => {
+        acc[key.toLowerCase()] = props[key];
+        return acc;
+    }, {});
+
+    for (const key of keys) {
+        const value = lookup[String(key).toLowerCase()];
+        if (value !== undefined && value !== null && String(value).trim()) {
+            return value;
         }
     }
     return '';
@@ -225,13 +253,18 @@ const findVillageFeature = (geojson, village) => {
 
     let matches = geojson.features.filter((feature) => {
         const props = feature.properties || {};
-        return normalizeVillageName(props.DESA) === villageName;
+        const rawName = findPropertyCaseInsensitive(props, FEATURE_VILLAGE_KEYS);
+        return normalizeVillageName(rawName) === villageName;
     });
 
     if (districtName) {
         const narrowed = matches.filter((feature) => {
             const props = feature.properties || {};
-            return normalizeLocationName(props.KECAMATAN) === districtName;
+            const rawName = findPropertyCaseInsensitive(
+                props,
+                FEATURE_DISTRICT_KEYS
+            );
+            return normalizeLocationName(rawName) === districtName;
         });
         if (narrowed.length) {
             matches = narrowed;
@@ -241,7 +274,11 @@ const findVillageFeature = (geojson, village) => {
     if (regencyName) {
         const narrowed = matches.filter((feature) => {
             const props = feature.properties || {};
-            return normalizeLocationName(props.KAB_KOTA) === regencyName;
+            const rawName = findPropertyCaseInsensitive(
+                props,
+                FEATURE_REGENCY_KEYS
+            );
+            return normalizeLocationName(rawName) === regencyName;
         });
         if (narrowed.length) {
             matches = narrowed;
@@ -259,7 +296,11 @@ const findFallbackFeature = (geojson, districtName, regencyName) => {
     if (districtName) {
         const districtMatch = geojson.features.find((feature) => {
             const props = feature.properties || {};
-            return normalizeLocationName(props.KECAMATAN) === districtName;
+            const rawName = findPropertyCaseInsensitive(
+                props,
+                FEATURE_DISTRICT_KEYS
+            );
+            return normalizeLocationName(rawName) === districtName;
         });
         if (districtMatch) {
             return districtMatch;
@@ -269,7 +310,11 @@ const findFallbackFeature = (geojson, districtName, regencyName) => {
     if (regencyName) {
         const regencyMatch = geojson.features.find((feature) => {
             const props = feature.properties || {};
-            return normalizeLocationName(props.KAB_KOTA) === regencyName;
+            const rawName = findPropertyCaseInsensitive(
+                props,
+                FEATURE_REGENCY_KEYS
+            );
+            return normalizeLocationName(rawName) === regencyName;
         });
         if (regencyMatch) {
             return regencyMatch;
@@ -328,6 +373,21 @@ const buildOwnerRecord = (data, village, coords, ownerColumns) => {
     }
     if (ownerColumns.longitude && coords) {
         record.longitude = coords[0];
+    }
+    if (ownerColumns.geom && coords) {
+        if (IS_POSTGRES) {
+            record.geom = Sequelize.fn(
+                'ST_SetSRID',
+                Sequelize.fn('ST_MakePoint', coords[0], coords[1]),
+                4326
+            );
+        } else {
+            record.geom = Sequelize.fn(
+                'ST_GeomFromText',
+                `POINT(${coords[0]} ${coords[1]})`,
+                4326
+            );
+        }
     }
 
     return record;
