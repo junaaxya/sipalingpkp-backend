@@ -3,7 +3,8 @@ const { sequelize } = require('./src/models');
 
 async function run() {
   try {
-    const ngrokUri = 'http://localhost:8000/api/auth/oauth/google/callback';
+    // const ngrokUri = 'http://localhost:8000/api/auth/oauth/google/callback';
+    const ngrokUri = 'https://smoke-enhance-telescope-share.trycloudflare.com/api/auth/oauth/google/callback';
     
     console.log(`⏳ Memperbarui database ke URL Ngrok: ${ngrokUri}...`);
 
